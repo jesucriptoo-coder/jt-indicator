@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MCI v5.5 · Oscillator Loop</title>
+  <style>
+    *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;background:#050608;overflow:hidden}body{display:grid;place-items:center;font-family:Arial,Helvetica,sans-serif}.stage{width:min(100vw,1920px);aspect-ratio:16/9;background:#050608;position:relative;overflow:hidden}svg{width:100%;height:100%;display:block}.axis{font-size:18px;fill:#a3a4a8}.tiny{font-size:15px;fill:#888b92;letter-spacing:.08em}.mono{font-family:Consolas,monospace}.grid{stroke:#16181b;stroke-width:1}.gridStrong{stroke:#2b2d30;stroke-width:1}.zero{stroke:#8d2c3c;stroke-width:1.5;stroke-dasharray:5 4;opacity:.85}.bandTop{fill:#6b141d;opacity:.26}.bandBottom{fill:#0f461f;opacity:.32}.white{fill:#ebebeb}.gold{fill:#c88910}.green{fill:#009d74}.red{fill:#9f2539}.yellow{fill:#f1ce28}</style>
+<style>@media (prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}</style></head>
+<body>
+<main class="stage" aria-label="Loop animado del oscilador MCI v5.5">
+<svg id="scene" viewBox="0 0 1920 1080" role="img">
+  <defs>
+    <linearGradient id="greenArea" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#00a67a" stop-opacity=".76"/><stop offset="1" stop-color="#006d59" stop-opacity=".15"/></linearGradient>
+    <linearGradient id="redArea" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#c52845" stop-opacity=".74"/><stop offset="1" stop-color="#731b30" stop-opacity=".15"/></linearGradient>
+    <filter id="softGlow"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <clipPath id="plotClip"><rect x="8" y="76" width="1764" height="824"/></clipPath>
+  </defs>
+  <rect width="1920" height="1080" fill="#050608"/>
+  <text x="14" y="48" fill="#b5b6ba" font-size="22" font-weight="700">MCI v5.5</text>
+  <text id="state" x="1785" y="48" text-anchor="end" class="tiny">MULTI-CONFLUENCE INSTITUTIONAL OSCILLATOR</text>
+  <g id="plotGrid"></g>
+  <rect x="8" y="360" width="1764" height="16" class="bandTop"/>
+  <rect x="8" y="780" width="1764" height="16" class="bandBottom"/>
+  <line x1="8" y1="610" x2="1772" y2="610" class="zero"/>
+  <g id="hist" clip-path="url(#plotClip)"></g>
+  <g id="areas" clip-path="url(#plotClip)"><path id="greenAreaPath" fill="url(#greenArea)"/><path id="redAreaPath" fill="url(#redArea)"/></g>
+  <g id="lineSegments" clip-path="url(#plotClip)"></g>
+  <g id="markers" clip-path="url(#plotClip)"></g>
+  <line id="cursor" x1="80" y1="76" x2="80" y2="900" stroke="#e8df2a" stroke-width="2" opacity=".8"/>
+  <g id="signals">
+    <rect id="signalBox" x="1240" y="106" width="270" height="54" rx="8" fill="#281f05" stroke="#d7ad22" stroke-width="1.5"/>
+    <circle id="signalDot" cx="1270" cy="133" r="7" fill="#d7ad22"/>
+    <text id="signalText" x="1292" y="140" fill="#fff7bb" font-size="18" font-weight="700" letter-spacing=".08em">TRIGGER LONG</text>
+  </g>
+  <g id="microCards">
+    <rect x="20" y="104" width="175" height="54" rx="7" fill="#0a0c0d" stroke="#212428"/>
+    <text x="36" y="128" class="tiny">MONEY FLOW</text><text id="mf" x="36" y="148" fill="#0fb88a" font-size="17" font-weight="700">+68.4 INFLOW</text>
+    <rect x="210" y="104" width="175" height="54" rx="7" fill="#0a0c0d" stroke="#212428"/>
+    <text x="226" y="128" class="tiny">SQUEEZE</text><text id="sq" x="226" y="148" fill="#d8b632" font-size="17" font-weight="700">ON · 2.8%</text>
+    <rect x="400" y="104" width="175" height="54" rx="7" fill="#0a0c0d" stroke="#212428"/>
+    <text x="416" y="128" class="tiny">ORDER FLOW</text><text id="of" x="416" y="148" fill="#0fb88a" font-size="17" font-weight="700">+1,842 DELTA</text>
+  </g>
+  <g id="rightAxis">
+    <text x="1786" y="188" text-anchor="end" class="axis">360,00</text><text x="1786" y="290" text-anchor="end" class="axis">280,00</text><text x="1786" y="394" text-anchor="end" class="axis">200,00</text><text x="1786" y="500" text-anchor="end" class="axis">120,00</text><text x="1786" y="604" text-anchor="end" class="axis">80,00</text><text x="1786" y="714" text-anchor="end" class="axis">0,00</text><text x="1786" y="818" text-anchor="end" class="axis">−80,00</text><text x="1786" y="890" text-anchor="end" class="axis">−120,00</text>
+  </g>
+  <g id="timeline"><text x="94" y="951" class="axis">18:00</text><text x="254" y="951" class="axis">00:00</text><text x="430" y="951" class="axis">06:00</text><text x="606" y="951" class="axis">12:00</text><text x="782" y="951" class="axis">18:00</text><text x="958" y="951" class="axis">30</text><text x="1134" y="951" class="axis">06:00</text><text x="1310" y="951" class="axis">12:00</text><text x="1486" y="951" class="axis">18:00</text><text x="1694" y="951" class="axis">Sep</text><rect x="207" y="978" width="195" height="45" rx="2" fill="#f3dc2b"/><text x="222" y="1007" fill="#151515" font-size="18" font-weight="700">LOOP 06.00s</text></g>
+  <text x="18" y="884" fill="#8e8f94" font-size="68" font-weight="900" opacity=".8">TV</text>
+  <circle id="playDot" cx="80" cy="1026" r="7" fill="#e8df2a"/><line x1="80" y1="1026" x2="1770" y2="1026" stroke="#242629"/>
+</svg>
+</main>
+<script>(function(){if(!matchMedia('(prefers-reduced-motion: reduce)').matches)return;var r=window.requestAnimationFrame.bind(window),n=0;window.requestAnimationFrame=function(f){return n++<3?r(f):0}})();</script><script>
+(()=>{
+  const NS='http://www.w3.org/2000/svg', $=id=>document.getElementById(id), W=1764, X0=8, BASE=610, TOP=250, BOT=820;
+  const add=(tag,a,p)=>{const e=document.createElementNS(NS,tag);for(const[k,v]of Object.entries(a))e.setAttribute(k,v);p.appendChild(e);return e};
+  const clamp=(n,a,b)=>Math.max(a,Math.min(b,n)), lerp=(a,b,t)=>a+(b-a)*t;
+  for(let i=0;i<=12;i++) add('line',{x1:X0+i*147,x2:X0+i*147,y1:76,y2:900,class:'grid'},$('plotGrid'));
+  [190,292,396,500,610,714,818,900].forEach((y,i)=>add('line',{x1:8,x2:1772,y1:y,y2:y,class:i===4?'gridStrong':'grid'},$('plotGrid')));
+  const N=188;
+  function sample(i,t){
+    const q=i/(N-1), phase=t/6;
+    const main=31*Math.sin(q*18.0+0.4)+15*Math.sin(q*46+1.7)+8*Math.sin(q*94+phase*3);
+    const p1=92*Math.exp(-Math.pow((q-(.22+.05*Math.sin(phase*6.28)))/.033,2));
+    const p2=82*Math.exp(-Math.pow((q-(.49+.06*Math.sin(phase*6.28+1)))/.045,2));
+    const p3=96*Math.exp(-Math.pow((q-(.82+.045*Math.sin(phase*6.28+2)))/.043,2));
+    const trough=-54*Math.exp(-Math.pow((q-.36)/.08,2))-42*Math.exp(-Math.pow((q-.72)/.06,2));
+    return clamp(main+p1+p2+p3+trough, -92, 96);
+  }
+  const x=i=>X0+25+i*(W-50)/(N-1), y=v=>BASE-v*4.25;
+  function path(vals){return 'M '+vals.map((v,i)=>`${x(i)} ${y(v)}`).join(' L ')}
+  function areaPath(vals,positive){
+    const pts=[]; for(let i=0;i<vals.length;i++){const v=positive?Math.max(0,vals[i]):Math.min(0,vals[i]);pts.push(`${x(i)} ${y(v)}`)}
+    return `M ${x(0)} ${BASE} L ${pts.join(' L ')} L ${x(vals.length-1)} ${BASE} Z`;
+  }
+  function render(raw){
+    const t=((raw%6)+6)%6, u=t/6, vals=Array.from({length:N},(_,i)=>sample(i,t));
+    const h=$('hist'); while(h.firstChild)h.removeChild(h.firstChild);
+    for(let i=0;i<122;i++){
+      const q=i/121, bar=18*Math.sin(q*50+t*1.6)+12*Math.sin(q*121-t*2.3)+8*Math.sin(q*11+2); const v=bar+(q>.45?5:-4);
+      const bx=18+i*(W-85)/121, bw=9, bh=Math.abs(v)*2.1, by=v>=0?BASE-bh:BASE;
+      add('rect',{x:bx,y:by,width:bw,height:Math.max(3,bh),fill:v>=0?(Math.abs(v)>20?'#a18c13':'#98999d'):'#999a9d',opacity:.82},h);
+    }
+    $('greenAreaPath').setAttribute('d',areaPath(vals,true)); $('redAreaPath').setAttribute('d',areaPath(vals,false));
+    const seg=$('lineSegments');while(seg.firstChild)seg.removeChild(seg.firstChild);
+    for(let i=1;i<N;i++){
+      const rising=vals[i]>=vals[i-1], hot=vals[i]>32||rising&&vals[i]>8;
+      add('line',{x1:x(i-1),y1:y(vals[i-1]),x2:x(i),y2:y(vals[i]),stroke:hot?'#c9820d':'#ececec','stroke-width':hot?4.5:3.5,'stroke-linecap':'round','opacity':.96},seg);
+    }
+    const m=$('markers');while(m.firstChild)m.removeChild(m.firstChild);
+    vals.forEach((v,i)=>{if(v>68 && (i===0||v>=vals[i-1]) && (i===N-1||v>=vals[i+1])){add('circle',{cx:x(i),cy:y(v),r:7,fill:'#ef475a',stroke:'#ef475a','stroke-width':3,filter:'url(#softGlow)'},m)}});
+    const cursorX=18+u*(W-85); $('cursor').setAttribute('x1',cursorX);$('cursor').setAttribute('x2',cursorX);$('playDot').setAttribute('cx',80+1690*u);
+    const center=vals[Math.floor(u*(N-1))], sell=t>3.0, green=!sell;
+    $('signalText').textContent=sell?'TRIGGER SHORT':'TRIGGER LONG'; $('signalBox').setAttribute('fill',sell?'#240912':'#281f05'); $('signalBox').setAttribute('stroke',sell?'#b12a43':'#d7ad22'); $('signalDot').setAttribute('fill',sell?'#e8435a':'#d7ad22');
+    const mf=lerp(68.4,-46.7,Math.min(1,Math.max(0,(t-1.1)/3.7))); $('mf').textContent=(mf>=0?'+':'')+mf.toFixed(1)+(mf>=0?' INFLOW':' OUTFLOW');$('mf').setAttribute('fill',mf>=0?'#0fb88a':'#de425b');
+    const sq=t<2.0?'ON · 2.8%':t<3.5?'RELEASING · 4.9%':'OFF · 6.4%'; $('sq').textContent=sq;$('sq').setAttribute('fill',t<2?'#d8b632':(sell?'#de425b':'#0fb88a'));
+    const delta=Math.round(lerp(1842,-2136,u)+Math.sin(t*3)*140);$('of').textContent=(delta>=0?'+':'')+delta.toLocaleString('en-US')+' DELTA';$('of').setAttribute('fill',delta>=0?'#0fb88a':'#de425b');
+    $('state').textContent=green?'CONFLUENCE · BULLISH ROTATION':'CONFLUENCE · BEARISH ROTATION';$('state').setAttribute('fill',green?'#0fb88a':'#de425b');
+  }
+  window.HF_RENDER=render;let start=performance.now();let rafId=null;function loop(now){render((now-start)/1000);rafId=requestAnimationFrame(loop)}function startLoop(){if(!rafId){start=performance.now();rafId=requestAnimationFrame(loop)}}function stopLoop(){if(rafId){cancelAnimationFrame(rafId);rafId=null}}window.addEventListener('message',function(e){if(e.source!==window.parent)return;if(e.data&&e.data.type==='jt-visibility'){if(e.data.visible)startLoop();else stopLoop()}});render(0);rafId=requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

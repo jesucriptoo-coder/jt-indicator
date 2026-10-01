@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>JT Indicators · Premium Hero Loop</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;background:#050505;color:#fff}body{font-family:Inter,Arial,sans-serif}.jt-hero-loop{position:relative;width:100%;height:100%;overflow:hidden;background:#050505;isolation:isolate}.jt-hero-loop:before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 68% 46%,rgba(255,104,20,.16),transparent 46%),linear-gradient(90deg,rgba(5,5,5,.98) 0%,rgba(5,5,5,.8) 34%,rgba(5,5,5,.12) 70%,rgba(5,5,5,.62) 100%);z-index:3;pointer-events:none}.jt-loop-stage{position:absolute;inset:0;perspective:1600px;transform-style:preserve-3d;transition:transform .05s linear}.jt-loop-scene{position:absolute;left:50%;top:50%;width:min(80vw,1360px);height:min(65vw,780px);transform-style:preserve-3d;will-change:transform,opacity,filter}.jt-loop-scene canvas{display:block;width:100%;height:100%;border:1px solid rgba(255,255,255,.16);border-radius:22px;background:#090a0a;box-shadow:0 34px 100px rgba(0,0,0,.6),0 0 110px rgba(255,102,18,.28),inset 0 0 0 1px rgba(255,255,255,.05)}
+</style>
+<style>@media (prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}</style></head>
+<body>
+<section class="jt-hero-loop" aria-label="JT Indicators animated market intelligence loop">
+  <div class="jt-loop-stage">
+    <div class="jt-loop-scene"><canvas width="1100" height="650"></canvas></div>
+    <div class="jt-loop-scene"><canvas width="1100" height="650"></canvas></div>
+    <div class="jt-loop-scene"><canvas width="1100" height="650"></canvas></div>
+  </div>
+</section>
+<script>(function(){if(!matchMedia('(prefers-reduced-motion: reduce)').matches)return;var r=window.requestAnimationFrame.bind(window),n=0;window.requestAnimationFrame=function(f){return n++<3?r(f):0}})();</script><script>
+(function(){
+var scenes=[].slice.call(document.querySelectorAll(".jt-loop-scene")),stage=document.querySelector(".jt-loop-stage"),W=1100,H=650,T=Math.PI*2,D=7;
+var C={bg:"#090a0a",grid:"rgba(220,230,230,.10)",muted:"rgba(235,240,238,.5)",white:"#f7f8f6",orange:"#ff7a26",teal:"#2bc4b4",red:"#ff5a54",gold:"#f0d768"};
+
+var mx=0,my=0,tmx=0,tmy=0,rafId=null;
+window.addEventListener("message",function(e){if(e.source!==window.parent)return;
+  if(!e.data)return;
+  if(e.data.type==="jt-parallax"){tmx=e.data.x;tmy=e.data.y}
+  if(e.data.type==="jt-visibility"){if(e.data.visible)startLoop();else stopLoop()}
+});
+function startLoop(){if(!rafId){start=performance.now();rafId=requestAnimationFrame(animate)}}
+function stopLoop(){if(rafId){cancelAnimationFrame(rafId);rafId=null}}
+
+function txt(c,s,x,y,col,size,a,align){c.save();c.globalAlpha=a===undefined?1:a;c.fillStyle=col;c.font="600 "+size+"px Arial";c.textAlign=align||"center";c.textBaseline="middle";c.fillText(s,x,y);c.restore()}
+function grid(c){c.fillStyle=C.bg;c.fillRect(0,0,W,H);for(var i=0;i<=12;i++){var x=32+i*86;c.strokeStyle=C.grid;c.lineWidth=1;c.beginPath();c.moveTo(x,38);c.lineTo(x,610);c.stroke()}for(i=0;i<=7;i++){var y=38+i*82;c.strokeStyle="rgba(220,230,230,.06)";c.beginPath();c.moveTo(32,y);c.lineTo(1068,y);c.stroke()}}
+function topBar(c,col){c.save();c.shadowColor=col;c.shadowBlur=22;c.fillStyle=col;c.globalAlpha=.9;c.fillRect(0,0,W,3);c.restore()}
+function sweep(c,t,speed){var sx=((t*(speed||150))%(W+500))-250;var grad=c.createLinearGradient(sx-140,0,sx+140,0);grad.addColorStop(0,"rgba(255,255,255,0)");grad.addColorStop(.5,"rgba(255,255,255,.10)");grad.addColorStop(1,"rgba(255,255,255,0)");c.save();c.globalCompositeOperation="lighter";c.fillStyle=grad;c.fillRect(0,0,W,H);c.restore()}
+function path(c,arr){c.beginPath();arr.forEach(function(p,i){i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1])})}
+function poly(c,arr,fill){path(c,arr);c.closePath();c.fillStyle=fill;c.fill()}
+function candles(c,fn,phase,colorA,colorB){for(var i=0;i<60;i++){var x=44+i*17,y0=fn(i-phase),y1=fn(i+.7-phase),wick=8+7*Math.abs(Math.sin(i*1.9));c.strokeStyle=y1<y0?colorA:colorB;c.fillStyle=c.strokeStyle;c.lineWidth=1.8;c.beginPath();c.moveTo(x,y0-wick);c.lineTo(x,y1+wick);c.stroke();c.fillRect(x-3,Math.min(y0,y1),6,Math.max(5,Math.abs(y1-y0)))}}
+
+function drawMCI(c,t){grid(c);topBar(c,C.orange);txt(c,"MCI v5.5",62,64,C.muted,17,.95,"left");txt(c,"CONFLUENCE / OSCILLATOR",1036,64,C.muted,12,.6,"right");var p=t/7*48;var up=[],dn=[],line=[];for(var i=0;i<=150;i++){var x=32+i*6.9,q=i-p;var mid=360+28*Math.sin(q*.19)+14*Math.sin(q*.51);var v=mid+76*Math.sin(q*.12+1.2)+18*Math.sin(q*.34);line.push([x,v]);up.push([x,Math.min(v,360)]);dn.push([x,Math.max(v,360)])}poly(c,up.concat([[1068,360],[32,360]]),"rgba(43,196,180,.26)");poly(c,dn.concat([[1068,360],[32,360]]),"rgba(255,90,84,.22)");c.save();c.lineWidth=10;c.strokeStyle="rgba(255,122,38,.28)";c.shadowBlur=26;c.shadowColor=C.orange;path(c,line);c.stroke();c.lineWidth=3.4;c.strokeStyle=C.white;c.shadowBlur=14;path(c,line);c.stroke();c.restore();for(i=0;i<48;i++){var x2=44+i*21,b=18+26*Math.abs(Math.sin(i*1.7+p*.1));c.save();c.shadowBlur=i%3?0:10;c.shadowColor=C.orange;c.fillStyle=i%3?"rgba(170,172,174,.6)":C.orange;c.fillRect(x2,360-b,7,b);c.fillRect(x2,360,7,b*.55);c.restore()}txt(c,"BUY ZONE",165,520,C.teal,13,.75,"center");txt(c,"SELL ZONE",935,198,C.red,13,.75,"center");c.strokeStyle="rgba(240,215,104,.75)";c.setLineDash([3,8]);c.beginPath();c.moveTo(32,360);c.lineTo(1068,360);c.stroke();c.setLineDash([]);sweep(c,t,120)}
+
+function drawSMC(c,t){grid(c);topBar(c,C.teal);txt(c,"SMC / PRICE ACTION",72,64,C.muted,15,.95,"left");txt(c,"STRUCTURE IN MOTION",1036,64,C.muted,12,.6,"right");var p=t/7*48,fn=function(i){var q=i-p;return 410-68*Math.sin(q*.11)-32*Math.sin(q*.29)-18*Math.sin(q*.73)};candles(c,fn,p,C.teal,C.red);var blocks=[{x:245,y:260,w:360,h:48,col:C.red},{x:505,y:382,w:365,h:46,col:C.teal},{x:710,y:472,w:300,h:48,col:C.red}];blocks.forEach(function(b,i){c.save();c.fillStyle=b.col;c.globalAlpha=.16;c.fillRect(b.x,b.y,b.w,b.h);c.globalAlpha=.5;c.shadowColor=b.col;c.shadowBlur=10;c.strokeStyle=b.col;c.strokeRect(b.x+.5,b.y+.5,b.w-1,b.h-1);c.globalAlpha=1;txt(c,i===1?"FVG":"ORDER BLOCK",b.x+b.w/2,b.y+25,b.col,12,.8,"center");c.restore()});c.save();c.setLineDash([8,9]);c.strokeStyle=C.teal;c.globalAlpha=.8;c.beginPath();c.moveTo(340,300);c.lineTo(570,300);c.stroke();c.strokeStyle=C.red;c.beginPath();c.moveTo(635,445);c.lineTo(900,445);c.stroke();c.restore();txt(c,"BOS",575,284,C.teal,13,.9,"center");txt(c,"CHoCH",770,430,C.red,13,.9,"center");c.save();c.shadowColor=C.teal;c.shadowBlur=24;c.strokeStyle=C.teal;c.lineWidth=3.4;path(c,[[120,520],[300,475],[490,460],[680,370],[1000,245]]);c.stroke();c.restore();txt(c,"LIQUIDITY",930,185,C.teal,12,.7,"center");sweep(c,t,110)}
+
+function rr(c,x,y,buy){c.save();c.globalAlpha=.24;c.fillStyle=buy?C.teal:C.red;c.fillRect(x,y-78,76,78);c.fillStyle=buy?C.red:C.teal;c.fillRect(x,y,76,58);c.globalAlpha=.8;c.strokeStyle=buy?C.teal:C.red;c.strokeRect(x+.5,y-78.5,75,136);c.setLineDash([4,4]);c.strokeStyle=C.white;c.beginPath();c.moveTo(x-10,y);c.lineTo(x+86,y);c.stroke();c.restore()}
+function drawSG(c,t){grid(c);topBar(c,C.gold);txt(c,"Jesu SG v8",70,64,C.muted,16,.95,"left");txt(c,"RANGE SIGNALS",1036,64,C.muted,12,.6,"right");var p=t/7*36,upper=[],lower=[];for(var i=0;i<=130;i++){var q=i-p,x=32+i*8;var m=325+24*Math.sin(q*.17)+15*Math.sin(q*.41),h=104+14*Math.sin(q*.23);upper.push([x,m-h]);lower.push([x,m+h])}poly(c,upper.concat(lower.slice().reverse()),"rgba(111,115,115,.22)");poly(c,upper.concat(upper.map(function(a){return[a[0],a[1]+32]}).reverse()),"rgba(247,248,246,.16)");poly(c,lower.concat(lower.map(function(a){return[a[0],a[1]-32]}).reverse()),"rgba(240,215,104,.18)");c.save();c.shadowBlur=16;c.shadowColor=C.white;c.lineWidth=4;c.strokeStyle=C.white;path(c,upper);c.stroke();c.shadowColor=C.gold;c.strokeStyle=C.gold;path(c,lower);c.stroke();c.restore();candles(c,function(i){var q=i-p;return 325+24*Math.sin(q*.17)+15*Math.sin(q*.41)+Math.sin(q*.28)*(104+14*Math.sin(q*.23))*.6},p,C.gold,"rgba(180,182,183,.85)");var events=[{x:245,y:470,b:true},{x:445,y:190,b:false},{x:665,y:468,b:true},{x:880,y:185,b:false}];events.forEach(function(e,i){var pulse=.6+.4*(.5+.5*Math.sin(T*i+t*T/7));c.save();c.shadowBlur=14;c.shadowColor=e.b?C.white:C.gold;c.fillStyle=e.b?C.white:C.gold;c.beginPath();if(e.b){c.moveTo(e.x,e.y);c.lineTo(e.x-9,e.y+15);c.lineTo(e.x+9,e.y+15)}else{c.moveTo(e.x,e.y);c.lineTo(e.x-9,e.y-15);c.lineTo(e.x+9,e.y-15)}c.closePath();c.fill();c.restore();txt(c,e.b?"BUY":"SELL",e.x,e.b?e.y+32:e.y-32,e.b?C.white:C.gold,13,pulse,"center");if(pulse>.78)rr(c,e.x-38,e.y,e.b)});txt(c,"TOUCH → REACT → EXIT",550,590,C.muted,12,.6,"center");sweep(c,t,95)}
+
+var start=performance.now();
+function animate(now){
+  var t=((now-start)/1000)%D;
+  mx+=(tmx-mx)*.06; my+=(tmy-my)*.06;
+  stage.style.transform="rotateX("+(-my*7)+"deg) rotateY("+(mx*10)+"deg)";
+  scenes.forEach(function(s,i){
+    var a=i*120-t/D*360;
+    while(a>180)a-=360; while(a<-180)a+=360;
+    var rad=a*Math.PI/180, front=Math.max(0,Math.cos(rad));
+    s.style.transform="translate(-50%,-50%) rotateY("+a+"deg) translateZ(430px) scale("+(0.7+.4*front)+")";
+    s.style.opacity=String(.3+.7*front);
+    s.style.filter="blur("+(6-5*front)+"px) saturate("+(1+.3*front)+")";
+    s.style.zIndex=String(Math.round(front*100));
+    var cc=s.querySelector("canvas").getContext("2d");
+    cc.clearRect(0,0,W,H);
+    if(i===0)drawMCI(cc,t);
+    if(i===1)drawSMC(cc,t);
+    if(i===2)drawSG(cc,t);
+  });
+  rafId=requestAnimationFrame(animate);
+}
+rafId=requestAnimationFrame(animate);
+})();
+</script>
+</body>
+</html>
