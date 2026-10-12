@@ -7,9 +7,9 @@
 <style>@media (prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}</style></head>
 <body>
 <main class="stage" aria-label="Animación centrada de indicador Smart Money Concepts"><canvas id="chart" width="1920" height="1080"></canvas></main>
-<script>(function(){if(!matchMedia('(prefers-reduced-motion: reduce)').matches)return;var r=window.requestAnimationFrame.bind(window),n=0;window.requestAnimationFrame=function(f){return n++<3?r(f):0}})();</script><script>
+<script>(function(){var c=matchMedia('(pointer: coarse)').matches,m=navigator.deviceMemory||8,k=navigator.hardwareConcurrency||8,lite=c||m<=4||k<=4;window.JT={lite:lite,fi:lite?1000/24:1000/40,hold:0,ok:function(now){if(now<JT.hold||now-JT.last<JT.fi)return false;JT.last=now;return true},last:-1e9,noShadow:function(g){if(!lite)return;try{Object.defineProperty(g,'shadowBlur',{set:function(){},get:function(){return 0}})}catch(e){}}};addEventListener('message',function(e){if(e.source!==parent||!e.data)return;if(e.data.type==='jt-hold')JT.hold=performance.now()+(e.data.ms||300)});})();</script><script>(function(){if(!matchMedia('(prefers-reduced-motion: reduce)').matches)return;var r=window.requestAnimationFrame.bind(window),n=0;window.requestAnimationFrame=function(f){return n++<3?r(f):0}})();</script><script>
 (()=>{
-const cv=document.getElementById('chart'),g=cv.getContext('2d'),W=1920,H=1080,TAU=Math.PI*2,D=6;
+const cv=document.getElementById('chart'),g=cv.getContext('2d'),W=1920,H=1080,TAU=Math.PI*2,D=6;if(JT.lite){cv.width=W*.5;cv.height=H*.5;g.scale(.5,.5);JT.noShadow(g)}
 const P={l:12,r:1844,t:114,b:950}, C={bg:'#090a0a',grid:'rgba(230,235,235,.075)',grid2:'rgba(230,235,235,.035)',up:'#ef9259',up2:'#ff9a5f',down:'#96989b',teal:'#009d8d',teal2:'#31c5b1',red:'#a8293a',red2:'#e63f50',yellow:'#f0d72b',white:'#e9eceb'};
 const keys=[[-8,-55],[-4,-12],[0,4],[4,32],[8,22],[12,54],[16,30],[20,72],[24,48],[28,36],[32,20],[36,44],[40,28],[44,6],[48,38],[52,15],[56,-10],[60,-28],[64,-10],[68,-42],[72,-65],[76,-40],[80,-12]];
 const N=96,step=17,baseY=540,scale=3.0;
@@ -46,7 +46,7 @@ function annotations(shift,u){
 function currentPrice(u){const y=455+8*Math.sin(TAU*u);g.save();g.strokeStyle=C.yellow;g.globalAlpha=.92;g.setLineDash([3,8]);g.lineWidth=2;g.beginPath();g.moveTo(P.l,y);g.lineTo(P.r-96,y);g.stroke();g.restore();g.fillStyle=C.yellow;g.fillRect(P.r-93,y-24,82,48);txt('635,72',P.r-52,y-7,'#141414',17,1,'center');txt('03:49:12',P.r-52,y+12,'#141414',15,1,'center')}
 function axes(){const vals=['780,00','740,00','700,00','680,00','640,00','600,00','560,00','520,00','480,00','0,00'];vals.forEach((v,i)=>txt(v,1818,130+i*85,'rgba(235,238,237,.66)',17,.95,'right'));txt('MCI / SMC',24,137,'rgba(233,239,237,.55)',16,.7,'left')}
 function render(seconds){const t=((seconds%D)+D)%D,u=t/D;const shift=9+u*1.5+0.15*Math.sin(TAU*u);bg();blocks(shift,u);candles(shift,u);annotations(shift,u);currentPrice(u);axes();g.save();g.globalAlpha=.07;g.fillStyle='#9ca3a3';g.font='900 92px Arial';g.fillText('VOLATILITY_100_INDEX',150,490);g.restore()}
-window.HF_RENDER=render;let start=performance.now();let rafId=null;function loop(now){render((now-start)/1000);rafId=requestAnimationFrame(loop)}function startLoop(){if(!rafId){start=performance.now();rafId=requestAnimationFrame(loop)}}function stopLoop(){if(rafId){cancelAnimationFrame(rafId);rafId=null}}window.addEventListener('message',function(e){if(e.source!==window.parent)return;if(e.data&&e.data.type==='jt-visibility'){if(e.data.visible)startLoop();else stopLoop()}});render(0);rafId=requestAnimationFrame(loop);
+window.HF_RENDER=render;let start=performance.now();let rafId=null;function loop(now){rafId=requestAnimationFrame(loop);if(JT.ok(now))render((now-start)/1000)}function startLoop(){if(!rafId){start=performance.now();rafId=requestAnimationFrame(loop)}}function stopLoop(){if(rafId){cancelAnimationFrame(rafId);rafId=null}}window.addEventListener('message',function(e){if(e.source!==window.parent)return;if(e.data&&e.data.type==='jt-visibility'){if(e.data.visible)startLoop();else stopLoop()}});render(0);rafId=requestAnimationFrame(loop);
 })();
 </script>
 </body>
