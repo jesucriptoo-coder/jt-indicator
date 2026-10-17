@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Smart Money Concepts 2.0 · en vivo</title>
+<style>*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;background:#0a0b0b;overflow:hidden}canvas{display:block;width:100%;height:100%}</style></head>
+<body><canvas id="c"></canvas>
+<script>
+/* JT-Smart Money Concepts 2.0 (v33) en vivo. Logica de SMC 2.0.txt sobre un precio simulado:
+   - Estructura: swings (pivote 7/7 sobre cuerpo), BOS (a favor) / CHoCH (en contra), Build Sweep "x" (pincha y cierra sin romper).
+   - Order Block: nace en cada quiebre; origen = extremo de la pierna (ultimas 15 velas), zona acotada a ~1 ATR.
+     Se extiende mientras esta fresco. Al mitigarse (cierre dentro) se convierte en Breaker Block (azul) y muere al cerrar mas alla.
+   - FVG: hueco de 3 velas >= 0.5 ATR, linea media. Al mitigarse pasa a IFVG (color invertido + linea amarilla punteada).
+   - Liquidez Buy-side (bajo minimos) / Sell-side (sobre maximos) con % por lado; se borra al tomarse (sweep = linea, grab = marco).
+   - Signals (rebote en banda dinamica) y anomalia confirmada (circulo amarillo). EMA sobre el precio. */
+(()=>{
+const cv=document.getElementById('c'),g=cv.getContext('2d');
+const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+const lite=matchMedia('(pointer:coarse)').matches||(navigator.hardwareConcurrency||8)<=4;
+const FAST=/fast/.test(location.search);
+const C={bg:'#0a0b0b',bull:'#26a69a',bear:'#ef5350',orange:'#e98a4e',white:'#ecefee',breaker:'#2196f3',sweep:'#ab47bc',ifvgLine:'#ffeb3b',anm:'#FFEB3B',grab:'#ffca28',full:'#ff5252',ema:'#ffb74d'};
+const T2=Math.PI*2, BAR=FAST?.012:.8/3, WARM=300;
+let W=0,H=0,DPR=1,u=1;
+function resize(){DPR=Math.min(devicePixelRatio||1,lite?1.25:2);W=innerWidth||640;H=innerHeight||360;cv.width=Math.round(W*DPR);cv.height=Math.round(H*DPR);g.setTransform(DPR,0,0,DPR,0,0);u=Math.max(W<520?1:.55,Math.min(W/960,H/540))}
+addEventListener('resize',resize);resize();
+
+function rng(a){return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const R=rng(7331);
+const gauss=()=>{let a=0;for(let i=0;i<4;i++)a+=R();return(a-2)*1.732};
+const ema=(p,x,l)=>p==null?x:p+(x-p)*2/(l+1);
+const bars=[], ev=[], STAT={bos:0,choch:0,xs:0,ob:0,brk:0,fvg:0,ifvg:0,grab:0,sweep:0,sig:0,anm:0,bars:0};
+const P={e:0,anchor:0,burst:0,drift:0,since:30,prevC:null,vol:1,gapNext:0};
+const S={atr:null,swH:null,swL:null,trend:0,obs:[],fvgs:[],liq:[],struct:[],lastBuy:-99,lastSell:-99,cl:[],sgTr:null,sgW:null,emaV:null,ret:null,rets:[],vols:[]};
+const bodyH=q=>Math.max(q.o,q.c),bodyL=q=>Math.min(q.o,q.c);
+
+function gen(n){
+  // mercado con impulsos (para BOS/CHoCH/FVG) y retrocesos
+  if(P.burst>0){P.burst--;P.anchor+=P.drift}
+  else{P.since++;if(P.since>28&&R()<.08){P.burst=8+Math.floor(R()*14);P.drift=(R()<.5?-1:1)*(.9+.5*R());P.since=0}}
+  P.e=.4*P.e+1.45*gauss();
+  const px=1000+P.anchor+11*Math.sin(n*T2/46+.3)+4*Math.sin(n*T2/17+1.1)+P.e;
+  let o=P.prevC==null?px:P.prevC;
+  // gaps ocasionales en impulso: generan FVG
+  if(P.burst>0&&R()<.3)o+=Math.sign(P.drift)*(3+2.5*R());
+  const c=px+(o-(P.prevC==null?px:P.prevC))*.4;P.prevC=c;
+  const h=Math.max(o,c)+Math.abs(gauss())*1.2,l=Math.min(o,c)-Math.abs(gauss())*1.2;
+  const vol=Math.max(.2,P.vol=.78*P.vol+.22*(1+.8*Math.abs(gauss())+(P.burst>0?.5:0)));
+  bars[n]={o,h,l,c,vol,path:R()<.5?[o,h,l,c]:[o,l,h,c],sgBuy:false,sgSell:false,anm:0,sgU:0,sgL:0,ema:0};
+  const b=bars[n],pb=bars[n-1],pc=pb?pb.c:c;
+  const tr=pb?Math.max(h-l,Math.abs(h-pb.c),Math.abs(l-pb.c)):h-l;S.atr=S.atr==null?tr:(S.atr*13+tr)/14;const atr=S.atr;b.atr=atr;
+  S.emaV=ema(S.emaV,c,21);b.ema=S.emaV;
+
+  // pivotes de estructura 7/7 (cuerpo)
+  const ps=n-5;
+  if(ps>=5&&bars[ps]){let isH=true,isL=true;const q=bars[ps];
+    for(let k=ps-5;k<=n;k++){if(k===ps||!bars[k])continue;if(bodyH(bars[k])>=bodyH(q))isH=false;if(bodyL(bars[k])<=bodyL(q))isL=false}
+    if(isH)S.swH={p:bodyH(q),i:ps};if(isL)S.swL={p:bodyL(q),i:ps}}
+  // Build Sweep: pincha el swing y cierra de vuelta
+  if(S.swH&&h>S.swH.p&&c<=S.swH.p&&n>40){addStruct({k:'x',p:S.swH.p,i0:S.swH.i,i1:n,tip:h,up:true});STAT.xs++;S.swH={p:h,i:n}}
+  if(S.swL&&l<S.swL.p&&c>=S.swL.p&&n>40){addStruct({k:'x',p:S.swL.p,i0:S.swL.i,i1:n,tip:l,up:false});STAT.xs++;S.swL={p:l,i:n}}
+  // quiebres BOS / CHoCH
+  if(S.swH&&pc<=S.swH.p&&c>S.swH.p){const ch=S.trend===-1;if(n>40){addStruct({k:ch?'choch':'bos',p:S.swH.p,i0:S.swH.i,i1:n,up:true});ch?STAT.choch++:STAT.bos++;createOB(true,S.swH.i,n)}S.trend=1;S.swH=null}
+  if(S.swL&&pc>=S.swL.p&&c<S.swL.p){const ch=S.trend===1;if(n>40){addStruct({k:ch?'choch':'bos',p:S.swL.p,i0:S.swL.i,i1:n,up:false});ch?STAT.choch++:STAT.bos++;createOB(false,S.swL.i,n)}S.trend=-1;S.swL=null}
+  // FVG
+  const b2=bars[n-2];
+  if(b2&&n>40){
+    const bg=l-b2.h,sg=b2.l-h;
+    if(bg>0&&bg>=atr*.95&&!fvgOverlap(l,b2.h,true)){S.fvgs.push({top:l,bot:b2.h,bull:true,state:0,i:n-2,born:n,dead:false,at:0});STAT.fvg++;trim(S.fvgs,true,3)}
+    if(sg>0&&sg>=atr*.95&&!fvgOverlap(b2.l,h,false)){S.fvgs.push({top:b2.l,bot:h,bull:false,state:0,i:n-2,born:n,dead:false,at:0});STAT.fvg++;trim(S.fvgs,false,3)}}
+  // mitigacion FVG / OB (cierre)
+  for(const f of S.fvgs){if(f.dead||f.born===n)continue;
+    if(f.state===0){const mit=f.bull?c<=f.bot:c>=f.top;if(mit&&true){f.state=1;f.stAt=n;STAT.ifvg++}}
+    else{const die=f.bull?c>=f.top:c<=f.bot;if(die)f.dead=true}}
+  for(const o of S.obs){if(o.dead||o.born===n)continue;
+    if(o.state===0){const mit=o.bull?c<o.bot:c>o.top;if(mit){o.state=1;o.stAt=n;STAT.brk++}}
+    else{const die=o.bull?c>o.top:c<o.bot;if(die)o.dead=true}}
+  S.fvgs=S.fvgs.filter(f=>!f.dead&&n-f.i<260);S.obs=S.obs.filter(o=>!o.dead&&n-o.i<300);
+  // liquidez: pivote 8/8 propio
+  const LP=5,pv=n-LP;
+  if(pv>=LP&&bars[pv]){let isH=true,isL=true;const q=bars[pv];
+    for(let k=pv-LP;k<=n;k++){if(k===pv||!bars[k])continue;if(bodyH(bars[k])>=bodyH(q))isH=false;if(bodyL(bars[k])<=bodyL(q))isL=false}
+    if(isH)addLiq(false,bodyH(q),pv,n);if(isL)addLiq(true,bodyL(q),pv,n)}
+  for(const z of S.liq){if(z.swept)continue;const grabbed=z.buy?l<z.p:h>z.p;
+    if(grabbed){z.swept=true;const through=z.buy?c<z.p:c>z.p;ev.push({i:n,t:through?'grab':'sweep',p:z.p,tip:z.buy?l:h,at:0});through?STAT.grab++:STAT.sweep++}}
+  S.liq=S.liq.filter(z=>!z.swept);
+  // Signals + anomalia
+  S.cl.push(c);if(S.cl.length>30)S.cl.shift();
+  const mean=S.cl.reduce((a,x)=>a+x,0)/S.cl.length,sd=Math.sqrt(S.cl.reduce((a,x)=>a+(x-mean)*(x-mean),0)/S.cl.length);
+  S.sgTr=ema(S.sgTr,c,30);const w=Math.max(2.2,sd*1.5);S.sgW=S.sgW==null?w:S.sgW+(w-S.sgW)*.22;
+  const su=S.sgTr+S.sgW,sl=S.sgTr-S.sgW;b.sgU=su;b.sgL=sl;
+  if(n>60){if(l<=sl+.2*S.sgW&&c>sl&&n-S.lastBuy>14){b.sgBuy=true;S.lastBuy=n;STAT.sig++;ev.push({i:n,t:'buy',at:0})}
+    else if(h>=su-.2*S.sgW&&c<su&&n-S.lastSell>14){b.sgSell=true;S.lastSell=n;STAT.sig++;ev.push({i:n,t:'sell',at:0})}}
+  const lr=pb?Math.log(c/pb.c):0;S.ret=ema(S.ret,lr,3);S.rets.push(S.ret);S.vols.push(vol);if(S.rets.length>20){S.rets.shift();S.vols.shift()}
+  if(S.rets.length>=20&&n>60){const m=S.rets.reduce((a,x)=>a+x,0)/20,s2=Math.sqrt(S.rets.reduce((a,x)=>a+(x-m)*(x-m),0)/20),z=s2?(S.ret-m)/s2:0;
+    const mv=S.vols.reduce((a,x)=>a+x,0)/20,sv=Math.sqrt(S.vols.reduce((a,x)=>a+(x-mv)*(x-mv),0)/20),zv=sv?(vol-mv)/sv:0;
+    if(Math.abs(z)>=2.6&&zv>=1.2){b.anm=S.ret>m?1:-1;STAT.anm++;ev.push({i:n,t:'anm',d:b.anm,at:0})}}
+  STAT.bars++;return b;
+}
+function addStruct(s){s.at=0;S.struct.push(s);ev.push({i:s.i1,t:s.k,up:s.up,at:0,ref:s});if(S.struct.length>10)S.struct.shift()}
+function fvgOverlap(t,b,bull){for(const f of S.fvgs){const eb=f.state===1?!f.bull:f.bull;if(eb===bull&&b<=f.top&&t>=f.bot)return true}return false}
+function trim(arr,bull,max){let c=0;for(let i=arr.length-1;i>=0;i--)if(arr[i].bull===bull){c++;if(c>max)arr.splice(i,1)}}
+function createOB(bull,fromBar,n){
+  const atr=S.atr,span=Math.max(Math.min(n-fromBar,15),1);let idx=0,ext=bull?1e20:-1e20;
+  for(let i=0;i<=span;i++){const q=bars[n-i];if(!q)break;if(bull){if(q.l<ext){ext=q.l;idx=i}}else{if(q.h>ext){ext=q.h;idx=i}}}
+  const q=bars[n-idx];const top=bull?Math.min(q.h,q.l+atr):q.h,bot=bull?q.l:Math.max(q.l,q.h-atr);
+  for(const o of S.obs){const eb=o.state===1?!o.bull:o.bull;if(eb===bull&&bot<=o.top&&top>=o.bot)return}
+  const br=(q.h-q.l)>0?(q.c-q.l)/(q.h-q.l):.5,pct=Math.round(30+br*40);
+  S.obs.push({top,bot,bull,state:0,i:n-idx,born:n,at:0,dead:false,pct:bull?pct:100-pct});STAT.ob++;
+  let c=0;for(let i=S.obs.length-1;i>=0;i--)if(S.obs[i].bull===bull){c++;if(c>3)S.obs.splice(i,1)}
+}
+function addLiq(buy,p,pv,n){
+  const atr=S.atr||1,c=bars[n].c;
+  for(const z of S.liq){if(z.buy===buy&&Math.abs(z.p-p)<atr*3){z.p=buy?Math.min(z.p,p):Math.max(z.p,p);z.vol+=sv(n);return}}
+  if(buy?p>c:p<c)return;
+  S.liq.push({buy,p,first:pv,vol:sv(n),at:0,swept:false});
+  const side=S.liq.filter(z=>z.buy===buy);while(side.length>2){side.shift().swept=true}S.liq=S.liq.filter(z=>!z.swept)
+}
+function sv(n){let v=0;for(let i=0;i<20;i++)if(bars[n-i])v+=bars[n-i].vol;return v}
+for(let n=0;n<WARM;n++)gen(n);
+for(const e of ev)e.at=-1e9;for(const s of S.struct)s.at=-1e9;for(const o of S.obs)o.at=-1e9;for(const f of S.fvgs)f.at=-1e9;for(const z of S.liq)z.at=-1e9;
+let nF=WARM;gen(nF);let barStart=performance.now();
+function inBar(b,f){const p=b.path,ss=t=>t*t*(3-2*t);let cur,hi=b.o,lo=b.o;const seg=[[0,.3],[.3,.72],[.72,1]];cur=p[0];
+  for(let k=0;k<3;k++){const [a,z]=seg[k];if(f>=z){cur=p[k+1];hi=Math.max(hi,cur);lo=Math.min(lo,cur)}else if(f>a){const t=ss((f-a)/(z-a));cur=p[k]+(p[k+1]-p[k])*t;hi=Math.max(hi,cur);lo=Math.min(lo,cur);break}else break}
+  return {c:cur,h:hi,l:lo}}
+
+let yLo=null,yHi=null,visible=true,toast=null,lastT=performance.now();
+const ease=t=>1-Math.pow(1-t,3),back=t=>{const c1=1.9,c3=c1+1;return 1+c3*Math.pow(t-1,3)+c1*Math.pow(t-1,2)};
+const fmt=v=>v.toFixed(2).replace('.',',');
+function nice(r,n){const raw=r/n,p=Math.pow(10,Math.floor(Math.log10(raw))),m=raw/p;return(m<1.5?1:m<3.5?2:m<7.5?5:10)*p}
+function rrect(x,y,w,h,r){g.beginPath();if(g.roundRect)g.roundRect(x,y,w,h,r);else g.rect(x,y,w,h)}
+function rgba(hex,a){const n=parseInt(hex.slice(1),16);return `rgba(${n>>16},${n>>8&255},${n&255},${a})`}
+
+function frame(now){
+  requestAnimationFrame(frame);
+  if(!visible||document.hidden){lastT=now;return}
+  const dt=Math.min(.1,(now-lastT)/1000);lastT=now;
+  if(now-barStart>BAR*1000*6)barStart=now;
+  while(now-barStart>=BAR*1000){
+    bars[nF].closedAt=now;const prevLen=ev.length;
+    nF++;gen(nF);barStart+=BAR*1000;
+    for(const e of ev)if(!e.at)e.at=now;for(const s of S.struct)if(!s.at)s.at=now;for(const o of S.obs)if(!o.at)o.at=now;for(const f of S.fvgs)if(!f.at)f.at=now;for(const z of S.liq)if(!z.at)z.at=now;
+    for(let k=prevLen;k<ev.length;k++){const e=ev[k];
+      if(e.t==='bos')toast={t:now,txt:(e.up?'BOS ALCISTA':'BOS BAJISTA')+' · continúa la tendencia',col:e.up?C.bull:C.bear};
+      else if(e.t==='choch')toast={t:now,txt:(e.up?'CHoCH ALCISTA':'CHoCH BAJISTA')+' · cambio de carácter',col:e.up?C.bull:C.bear};
+      else if(e.t==='grab')toast={t:now,txt:'LIQUIDITY GRAB · cierre más allá del nivel',col:C.full};
+      else if(e.t==='sweep')toast={t:now,txt:'LIQUIDITY SWEEP · mecha rechazada',col:C.grab};
+      else if(e.t==='anm')toast={t:now,txt:'ANOMALÍA CONFIRMADA · movimiento extremo + volumen',col:C.anm}}
+    if(nF%60===0){for(let k=0;k<nF-560;k++)if(bars[k])bars[k]=undefined;while(ev.length&&ev[0].i<nF-420)ev.shift()}
+  }
+  const frac=reduce?0:Math.min(1,(now-barStart)/(BAR*1000));
+  const fb=bars[nF],fo=inBar(fb,frac);
+  const axisW=Math.round(60*u),padT=Math.round(26*u),padB=Math.round(10*u);
+  const cL=0,cR=W-axisW,cT=padT,cB=H-padB,nVis=W<520?40:100,step=(cR-cL)/nVis,xc=cL+(cR-cL)*.84;
+  const xOf=i=>xc+(i-nF-frac)*step;
+  const i0=Math.max(0,nF-Math.ceil((xc-cL)/step)-3);
+  let mn=1e9,mx=-1e9;for(let i=i0;i<nF;i++){const b=bars[i];if(!b)continue;mn=Math.min(mn,b.l);mx=Math.max(mx,b.h)}
+  mn=Math.min(mn,fo.l);mx=Math.max(mx,fo.h);const pd=(mx-mn)*.12;mn-=pd;mx+=pd;
+  if(yLo==null){yLo=mn;yHi=mx}else{const k=1-Math.exp(-dt*2.5);yLo+=(mn-yLo)*k;yHi+=(mx-yHi)*k}
+  const Y=v=>cT+(yHi-v)/(yHi-yLo)*(cB-cT);
+
+  g.fillStyle=C.bg;g.fillRect(0,0,W,H);
+  const gr=g.createLinearGradient(0,cT,0,cB);gr.addColorStop(0,'rgba(60,62,62,.26)');gr.addColorStop(1,'rgba(0,0,0,.38)');g.fillStyle=gr;g.fillRect(0,cT,cR,cB-cT);
+  const ps=nice(yHi-yLo,6);g.lineWidth=1;g.strokeStyle='rgba(226,235,235,.05)';
+  for(let v=Math.ceil(yLo/ps)*ps;v<yHi;v+=ps){const y=Math.round(Y(v))+.5;g.beginPath();g.moveTo(0,y);g.lineTo(cR,y);g.stroke()}
+  g.strokeStyle='rgba(226,235,235,.045)';for(let i=Math.ceil(i0/10)*10;i<=nF+10;i+=10){const x=Math.round(xOf(i))+.5;if(x<0||x>cR)continue;g.beginPath();g.moveTo(x,cT);g.lineTo(x,cB);g.stroke()}
+
+  g.save();g.beginPath();g.rect(0,cT,cR,cB-cT);g.clip();
+  const xr=xOf(nF);
+  // FVG / IFVG
+  for(const f of S.fvgs){if(f.i<i0-30)continue;const age=Math.min(1,(now-f.at)/500),ext=Math.min(15,nF-f.i),x0=xOf(f.i),x1=x0+Math.max(step*ext,0)*ease(age);if(x1<0)continue;
+    const inv=f.state===1,bullShown=inv?!f.bull:f.bull,col=bullShown?C.bull:C.bear;
+    g.fillStyle=rgba(col,inv?.16:.12);g.fillRect(x0,Y(f.top),Math.max(0,(inv?Math.min(x1+step*8,xr+step*4):x1)-x0),Math.abs(Y(f.bot)-Y(f.top)));
+    g.strokeStyle=inv?rgba(C.ifvgLine,.8):rgba(col,.55);g.lineWidth=1;if(inv)g.setLineDash([3*u,3*u]);
+    const ym=Y((f.top+f.bot)/2);g.beginPath();g.moveTo(x0,ym);g.lineTo(inv?Math.min(x1+step*8,xr+step*4):x1,ym);g.stroke();g.setLineDash([])}
+  // Order Blocks / Breaker
+  for(const o of S.obs){if(o.i<i0-40)continue;const age=Math.min(1,(now-o.at)/600),x0=xOf(o.i),endBar=o.state===1?Math.min(nF,o.stAt+30):nF,x1=xOf(endBar)+step*3*ease(age);if(x1<0)continue;
+    const col=o.state===1?C.breaker:(o.bull?C.bull:C.bear);
+    g.fillStyle=rgba(col,o.state===1?.22:.2);g.fillRect(x0,Y(o.top),Math.max(0,x1-x0),Math.abs(Y(o.bot)-Y(o.top)));
+    g.strokeStyle=rgba(col,.4);g.setLineDash([4*u,4*u]);g.beginPath();const ym=Y((o.top+o.bot)/2);g.moveTo(x0,ym);g.lineTo(x1,ym);g.stroke();g.setLineDash([]);
+    // dominancia de volumen (barra corta) + %
+    const bh=Math.abs(Y(o.top)-Y(o.bot))/2,bl=step*5;g.fillStyle=rgba(C.bull,.45);g.fillRect(x0,Y(o.top),bl*(o.pct/100)*1.4,bh);g.fillStyle=rgba(C.bear,.45);g.fillRect(x0,Y(o.top)+bh,bl*((100-o.pct)/100)*1.4,bh);
+    g.fillStyle='rgba(255,255,255,.85)';g.font=Math.round(9*u)+'px Arial,sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText((o.state===1?'BB ':'')+o.pct+'%',(x0+x1)/2,ym)}
+  // Liquidez
+  const tot={true:0,false:0};for(const z of S.liq)tot[z.buy]+=z.vol;
+  for(const z of S.liq){const age=Math.min(1,(now-z.at)/500),col=z.buy?C.bull:C.bear,y=Y(z.p),x0=Math.max(0,xOf(Math.max(z.first,nF-40))),x1=xr+step*30*ease(age);
+    g.strokeStyle=rgba(col,.9);g.lineWidth=2*u;g.beginPath();g.moveTo(x0,y);g.lineTo(x1,y);g.stroke();
+    const pct=tot[z.buy]>0?Math.round(z.vol/tot[z.buy]*100):100;g.fillStyle=rgba(col,.95);g.font='600 '+Math.round(10.5*u)+'px Arial,sans-serif';g.textAlign='right';g.textBaseline=z.buy?'top':'bottom';
+    g.fillText((z.buy?'Buy-side ':'Sell-side ')+pct+'%',x1,y+(z.buy?3:-3)*u)}
+  // Estructura BOS/CHoCH/x
+  for(const s of S.struct){if(s.i1<i0-20)continue;const a=Math.min(1,(now-s.at)/400);if(a<=0)continue;
+    const x0=Math.max(0,xOf(s.i0)),x1=xOf(s.i1)*1,y=Y(s.p);
+    if(s.k==='x'){g.strokeStyle=rgba(C.sweep,.5);g.setLineDash([2*u,3*u]);g.lineWidth=1;g.beginPath();g.moveTo(x0,y);g.lineTo(x1,y);g.stroke();g.setLineDash([]);
+      g.strokeStyle=rgba(C.sweep,.95);g.beginPath();g.moveTo(x1,y);g.lineTo(x1,Y(s.tip));g.stroke();g.fillStyle=C.sweep;g.font='600 '+Math.round(10*u)+'px Arial,sans-serif';g.textAlign='center';g.textBaseline=s.up?'bottom':'top';g.fillText('x',x1,Y(s.tip)+(s.up?-1:1)*u)}
+    else{const col=s.up?C.bull:C.bear;g.strokeStyle=rgba(col,.6);g.setLineDash([5*u,4*u]);g.lineWidth=1;g.beginPath();g.moveTo(x0,y);g.lineTo(x0+(x1-x0)*ease(a),y);g.stroke();g.setLineDash([]);
+      g.globalAlpha=a;g.fillStyle=col;g.font='600 '+Math.round(10*u)+'px Arial,sans-serif';g.textAlign='center';g.textBaseline='bottom';g.fillText(s.k==='bos'?'BOS':'CHoCH',(x0+x1)/2,y-2*u);g.globalAlpha=1}}
+  // proyeccion BOS? / CHoCH?
+  const pj=(sw,lbl)=>{if(!sw)return;const y=Y(sw.p),x0=Math.max(0,xOf(sw.i));g.strokeStyle='rgba(255,255,255,.38)';g.lineWidth=1;g.beginPath();g.moveTo(x0,y);g.lineTo(xr,y);g.stroke();
+    g.fillStyle='rgba(255,255,255,.85)';g.font=Math.round(9*u)+'px Arial,sans-serif';g.textAlign='center';g.textBaseline='bottom';g.fillText(lbl,(x0+xr)/2,y-2*u)};
+  if(S.trend===1){pj(S.swH,'BOS?');pj(S.swL,'CHoCH?')}else if(S.trend===-1){pj(S.swL,'BOS?');pj(S.swH,'CHoCH?')}else{pj(S.swH,'BOS?');pj(S.swL,'BOS?')}
+  // EMA
+  g.strokeStyle=rgba(C.ema,.8);g.lineWidth=1.5*u;g.lineJoin='round';g.beginPath();let st=false;for(let i=i0;i<nF;i++){const b=bars[i];if(!b)continue;const x=xOf(i),y=Y(b.ema);st?g.lineTo(x,y):g.moveTo(x,y);st=true}g.lineTo(xr,Y(bars[nF-1].ema));g.stroke();
+  // velas
+  const cw=Math.max(2,step*.56),dc=(x,o,c,h,l)=>{const up=c>=o,col=up?C.bull:C.bear;g.strokeStyle=col;g.fillStyle=col;g.lineWidth=Math.max(1,1.2*u);
+    g.beginPath();g.moveTo(x,Y(h));g.lineTo(x,Y(l));g.stroke();const a=Y(Math.max(o,c)),b2=Y(Math.min(o,c));g.fillRect(x-cw/2,a,cw,Math.max(1.5,b2-a))};
+  for(let i=i0;i<nF;i++){const b=bars[i];if(!b)continue;const x=xOf(i);if(x<-8)continue;dc(x,b.o,b.c,b.h,b.l)}
+  dc(xr,fb.o,fo.c,fo.h,fo.l);
+  // eventos puntuales
+  for(const e of ev){if(e.i<i0-2)continue;const x=xOf(e.i),age=(now-e.at)/1000,k=Math.min(1,age/.45),s2=age>=.45?1:Math.max(0,back(k)),b=bars[e.i];if(!b)continue;
+    if(e.t==='buy'||e.t==='sell'){const buy=e.t==='buy',col='#f0f1ef',y=buy?Y(b.l)+16*u:Y(b.h)-16*u,dir=buy?1:-1;
+      g.save();g.translate(x,y);g.scale(s2,s2);g.fillStyle=col;g.beginPath();g.moveTo(0,0);g.lineTo(-6*u,dir*10*u);g.lineTo(6*u,dir*10*u);g.closePath();g.fill();g.font='600 '+Math.round(9.5*u)+'px Arial,sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText(buy?'Buy':'Sell',0,dir*20*u);g.restore()}
+    else if(e.t==='anm'){const y=e.d>0?Y(b.h)-9*u:Y(b.l)+9*u;g.save();g.translate(x,y);g.scale(s2,s2);g.fillStyle=C.anm;if(!lite){g.shadowColor=C.anm;g.shadowBlur=9*u}g.beginPath();g.arc(0,0,3.2*u,0,T2);g.fill();g.restore()}
+    else if(e.t==='sweep'){const a=Math.min(1,age/.3);g.strokeStyle=rgba(C.grab,.9*a);g.lineWidth=2*u;g.beginPath();g.moveTo(x,Y(e.p));g.lineTo(x,Y(e.p)+(Y(e.tip)-Y(e.p))*ease(a));g.stroke()}
+    else if(e.t==='grab'){const a=Math.min(1,age/.3),pad=3*u,yt=Math.min(Y(e.p),Y(e.tip))-pad,yb=Math.max(Y(e.p),Y(e.tip))+pad;g.strokeStyle=rgba(C.full,.9*a);g.lineWidth=2*u;g.strokeRect(x-step*1.1,yt,step*2.2,yb-yt)}}
+  g.restore();
+
+  g.fillStyle='#0d0e0e';g.fillRect(cR,0,axisW,H);g.strokeStyle='rgba(226,235,235,.12)';g.beginPath();g.moveTo(cR+.5,0);g.lineTo(cR+.5,H);g.stroke();
+  g.fillStyle='rgba(232,236,235,.6)';g.font=Math.round(10*u)+'px Arial,sans-serif';g.textAlign='center';g.textBaseline='middle';
+  for(let v=Math.ceil(yLo/ps)*ps;v<yHi;v+=ps){const y=Y(v);if(y>cT+8*u&&y<cB-8*u)g.fillText(fmt(v),cR+axisW/2,y)}
+  const yp=Y(fo.c);g.save();g.strokeStyle='#f1d92a';g.lineWidth=1;g.setLineDash([3*u,5*u]);g.beginPath();g.moveTo(0,yp);g.lineTo(cR,yp);g.stroke();g.restore();
+  g.fillStyle='#f1d92a';g.fillRect(cR,yp-9*u,axisW,18*u);g.fillStyle='#111';g.font='600 '+Math.round(10*u)+'px Arial,sans-serif';g.fillText(fmt(fo.c),cR+axisW/2,yp);
+  g.textAlign='left';g.textBaseline='middle';g.fillStyle='rgba(232,236,235,.62)';g.font='600 '+Math.round(11*u)+'px Arial,sans-serif';g.fillText('JT-Smart Money Concepts',10*u,14*u);
+  g.fillStyle='rgba(232,236,235,.3)';g.font=Math.round(9*u)+'px Arial,sans-serif';if(W>=520)g.fillText('Estructura, Order Blocks, FVG y liquidez · Breaker/IFVG al mitigarse',10*u,H-padB-6*u);
+  if(toast){const a=(now-toast.t)/1000;if(a>2.6)toast=null;else{const al=a<.3?a/.3:a>2.1?(2.6-a)/.5:1,ty=cT+8*u+(1-ease(Math.min(1,a/.4)))*-14*u;
+    g.save();g.globalAlpha=al;g.font='600 '+Math.round(10.5*u)+'px Arial,sans-serif';let tw0=g.measureText(toast.txt).width;const maxW=cR-cL-14;if(tw0+34*u>maxW){const fz=parseFloat(g.font.match(/(\d+(?:\.\d+)?)px/)[1])*Math.max(.72,maxW/(tw0+34*u));g.font='600 '+fz.toFixed(1)+'px Arial,sans-serif';tw0=g.measureText(toast.txt).width}const tw=Math.min(tw0+34*u,maxW),tx=cL+(cR-cL)/2-tw/2;
+    rrect(tx,ty,tw,24*u,12*u);g.fillStyle='rgba(12,13,13,.9)';g.fill();g.strokeStyle='rgba(255,255,255,.14)';g.lineWidth=1;g.stroke();
+    g.fillStyle=toast.col;g.beginPath();g.arc(tx+13*u,ty+12*u,3.5*u,0,T2);g.fill();g.fillStyle='#e9ecec';g.textAlign='left';g.fillText(toast.txt,tx+24*u,ty+12.5*u);g.restore()}}
+}
+try{new IntersectionObserver(e=>{visible=e[0].isIntersecting;lastT=performance.now()},{threshold:0}).observe(cv)}catch(e){}
+addEventListener('message',e=>{if(e.data&&e.data.type==='jt-visibility')visible=!!e.data.visible});
+window.__JT={STAT,bars,ev,get nF(){return nF},ST:S};
+requestAnimationFrame(frame);
+})();
+</script></body></html>

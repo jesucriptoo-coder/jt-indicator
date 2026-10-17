@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Jesulito Pro · en vivo</title>
+<style>*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;background:#0a0b0b;overflow:hidden}canvas{display:block;width:100%;height:100%}</style></head>
+<body><canvas id="c"></canvas>
+<script>
+/* Jesulito Pro en vivo. Calculo REAL del indicador (Jesulito_Pro_v1.pine) sobre un precio simulado:
+   WaveTrend (canal 9, media 12) + Money Flow estilo Chaikin (20) -> Score = wt*(0.7)+mf*0.3, Trigger = EMA(4).
+   Top = Score>60 y cruza hacia abajo el Trigger. Bottom = Score<-60 y cruza hacia arriba.
+   Punto amarillo = primer cruce de cero tras un Top/Bottom. Divergencias por pivotes (5/5).
+   Zonas S/R sobre el precio con pivotes de la propia serie. */
+(()=>{
+const cv=document.getElementById('c'),g=cv.getContext('2d');
+const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+const lite=matchMedia('(pointer:coarse)').matches||(navigator.hardwareConcurrency||8)<=4;
+const FAST=/fast/.test(location.search);
+const C={bg:'#0a0b0b',bull:'#00E5B0',bear:'#FF3B5C',dBull:'#4CAF50',dBear:'#EF5350',mom:'#FFEB3B',orange:'#e98a4e',white:'#ecefee',gray:'#9ea2a2'};
+const T2=Math.PI*2, BAR=FAST?.012:.8/3, WARM=240, OB=60, OS=-60, CAPT=78, CAPB=-78;
+let W=0,H=0,DPR=1,u=1;
+function resize(){DPR=Math.min(devicePixelRatio||1,lite?1.25:2);W=innerWidth||640;H=innerHeight||360;cv.width=Math.round(W*DPR);cv.height=Math.round(H*DPR);g.setTransform(DPR,0,0,DPR,0,0);u=Math.max(W<520?1:.55,Math.min(W/960,H/540))}
+addEventListener('resize',resize);resize();
+
+/* ---- precio simulado: ondas largas + ruido, con cambios de regimen ---- */
+function rng(a){return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const R=rng(4521);
+const gauss=()=>{let a=0;for(let i=0;i<4;i++)a+=R();return(a-2)*1.732};
+const bars=[], sigs=[], STAT={top:0,bot:0,mom:0,divB:0,divS:0,bars:0};
+const S={e:0,anchor:0,burst:0,drift:0,since:50,prevC:null,vol:1,
+  esa:null,de:null,wt1:null,wt1s:null,trig:null,cmfN:[],cmfD:[],
+  pendBull:false,pendBear:false,lastPH:null,lastPL:null,lastTop:-99,lastBot:-99};
+const ema=(prev,x,len)=>prev==null?x:prev+(x-prev)*2/(len+1);
+function gen(n){
+  if(S.burst>0){S.burst--;S.anchor+=S.drift}
+  else{S.since++;if(S.since>45&&R()<.09){S.burst=10+Math.floor(R()*12);S.drift=(R()<.5?-1:1)*(.5+.5*R());S.since=0}}
+  S.e=.55*S.e+.6*gauss();
+  const px=1000+S.anchor+13*Math.sin(n*T2/55+.3)+7*Math.sin(n*T2/23+1.7)+S.e*1.8;
+  const o=S.prevC==null?px:S.prevC,c=px;S.prevC=c;
+  const wk=Math.abs(gauss())*1.7,h=Math.max(o,c)+wk*.8,l=Math.min(o,c)-Math.abs(gauss())*1.7*.8;
+  const vol=Math.max(.2,S.vol=.8*S.vol+.2*(1+.9*Math.abs(gauss())+(S.burst>0?.8:0)));
+  // WaveTrend
+  const hlc=c;
+  S.esa=ema(S.esa,hlc,9);S.de=ema(S.de,Math.abs(hlc-S.esa),9);
+  const ci=S.de>1e-9?(hlc-S.esa)/(.015*S.de):0;
+  S.wt1=ema(S.wt1,ci,12);
+  // Money flow (Chaikin)
+  const mfm=h===l?0:((c-l)-(h-c))/(h-l);S.cmfN.push(mfm*vol);S.cmfD.push(vol);if(S.cmfN.length>20){S.cmfN.shift();S.cmfD.shift()}
+  const cmf=S.cmfN.reduce((a,b)=>a+b,0)/S.cmfD.reduce((a,b)=>a+b,0),mfS=cmf*150;
+  const score=S.wt1*.7+mfS*.3;
+  const trigPrev=S.trig;S.trig=ema(S.trig,score,4);
+  const prevScore=bars[n-1]?bars[n-1].score:score;
+  const xDown=n>0&&prevScore>=trigPrev&&score<S.trig,xUp=n>0&&prevScore<=trigPrev&&score>S.trig;
+  let top=false,bot=false,mom=0;
+  if(n>30&&score>OB&&xDown&&n-S.lastTop>3){top=true;S.lastTop=n}
+  if(n>30&&score<OS&&xUp&&n-S.lastBot>3){bot=true;S.lastBot=n}
+  if(bot){S.pendBull=true;S.pendBear=false}
+  if(top){S.pendBear=true;S.pendBull=false}
+  if(S.pendBull&&prevScore<=0&&score>0){mom=1;S.pendBull=false}
+  if(S.pendBear&&prevScore>=0&&score<0){mom=-1;S.pendBear=false}
+  const b={o,h,l,c,score,trig:S.trig,mf:mfS*.3,top,bot,mom,divB:false,divS:false,path:R()<.5?[o,h,l,c]:[o,l,h,c],closedAt:-1e9};
+  bars[n]=b;
+  // divergencias con pivote 5/5 (se confirman 5 velas despues, como en Pine)
+  const pv=n-5;
+  if(pv>=5&&bars[pv]){
+    let isH=true,isL=true;
+    for(let k=pv-5;k<=n;k++){if(k===pv||!bars[k])continue;if(bars[k].score>=bars[pv].score)isH=false;if(bars[k].score<=bars[pv].score)isL=false}
+    if(isH){const cur={i:pv,s:bars[pv].score,p:bars[pv].h};if(S.lastPH&&pv-S.lastPH.i>=5&&pv-S.lastPH.i<=60&&cur.p>S.lastPH.p&&cur.s<S.lastPH.s){bars[pv].divS=true;sigs.push({i:pv,at:0,n,t:'divS'})}S.lastPH=cur}
+    if(isL){const cur={i:pv,s:bars[pv].score,p:bars[pv].l};if(S.lastPL&&pv-S.lastPL.i>=5&&pv-S.lastPL.i<=60&&cur.p<S.lastPL.p&&cur.s>S.lastPL.s){bars[pv].divB=true;sigs.push({i:pv,at:0,n,t:'divB'})}S.lastPL=cur}
+  }
+  STAT.bars++;if(top){STAT.top++}if(bot){STAT.bot++}if(mom)STAT.mom++;
+  if(top||bot||mom)sigs.push({i:n,at:0,n,t:top?'top':bot?'bot':'mom',m:mom});
+  return b;
+}
+for(let n=0;n<WARM;n++){gen(n)}
+for(const s of sigs)s.at=-1e9;
+let nF=WARM;gen(nF);
+let barStart=performance.now();
+function inBar(b,f){
+  const p=b.path,ss=t=>t*t*(3-2*t);let cur,hi=b.o,lo=b.o;const seg=[[0,.3],[.3,.72],[.72,1]];cur=p[0];
+  for(let k=0;k<3;k++){const [a,z]=seg[k];
+    if(f>=z){cur=p[k+1];hi=Math.max(hi,cur);lo=Math.min(lo,cur)}
+    else if(f>a){const t=ss((f-a)/(z-a));cur=p[k]+(p[k+1]-p[k])*t;hi=Math.max(hi,cur);lo=Math.min(lo,cur);break}else break}
+  return {c:cur,h:hi,l:lo};
+}
+// score intrabarra: interpolado hacia el valor cerrado para que el oscilador "respire"
+function scoreNow(n,f){const b=bars[n],p=bars[n-1]||b;const e=f*f*(3-2*f);return {s:p.score+(b.score-p.score)*e,t:p.trig+(b.trig-p.trig)*e,m:p.mf+(b.mf-p.mf)*e}}
+
+/* ---- vista ---- */
+let yLo=null,yHi=null,visible=true,toast=null,lastT=performance.now();
+const ease=t=>1-Math.pow(1-t,3), back=t=>{const c1=1.9,c3=c1+1;return 1+c3*Math.pow(t-1,3)+c1*Math.pow(t-1,2)};
+const fmt=v=>v.toFixed(2).replace('.',',');
+function nice(range,n){const raw=range/n,p=Math.pow(10,Math.floor(Math.log10(raw))),m=raw/p;return(m<1.5?1:m<3.5?2:m<7.5?5:10)*p}
+function rrect(x,y,w,h,r){g.beginPath();if(g.roundRect)g.roundRect(x,y,w,h,r);else g.rect(x,y,w,h)}
+function rgba(hex,a){const n=parseInt(hex.slice(1),16);return `rgba(${n>>16},${n>>8&255},${n&255},${a})`}
+
+function frame(now){
+  requestAnimationFrame(frame);
+  if(!visible||document.hidden){lastT=now;return}
+  const dt=Math.min(.1,(now-lastT)/1000);lastT=now;
+  if(now-barStart>BAR*1000*6)barStart=now;
+  while(now-barStart>=BAR*1000){
+    const b=bars[nF];b.closedAt=now;
+    for(const s of sigs)if(s.n===nF&&!s.at)s.at=now;
+    if(b.top)toast={t:now,txt:'TOP · Score en sobrecompra cruza el Trigger hacia abajo',col:C.bear};
+    else if(b.bot)toast={t:now,txt:'BOTTOM · Score en sobreventa cruza el Trigger hacia arriba',col:C.bull};
+    else if(b.mom)toast={t:now,txt:'MOMENTUM · cruce de cero confirma el rebote',col:C.mom};
+    else if(b.divS||b.divB){}
+    nF++;gen(nF);barStart+=BAR*1000;
+    for(const s of sigs)if(s.at===0&&s.n<nF)s.at=now;
+    if(nF%60===0){for(let k=0;k<nF-500;k++)if(bars[k])bars[k]=undefined;while(sigs.length&&sigs[0].i<nF-400)sigs.shift()}
+  }
+  const frac=reduce?0:Math.min(1,(now-barStart)/(BAR*1000));
+  const fb=bars[nF],fo=inBar(fb,frac),sc=scoreNow(nF,frac);
+  const axisW=Math.round(58*u),padT=Math.round(26*u),padB=Math.round(8*u),gap=Math.round(6*u);
+  const cL=0,cR=W-axisW,totH=H-padT-padB-gap,hP=Math.round(totH*.58),hO=totH-hP;
+  const pT=padT,pB=padT+hP,oT=pB+gap,oB=oT+hO;
+  const nVis=W<520?40:92,step=(cR-cL)/nVis,xc=cL+(cR-cL)*.9;
+  const xOf=i=>xc+(i-nF-frac)*step;
+  const i0=Math.max(0,nF-Math.ceil((xc-cL)/step)-3);
+
+  // escala precio
+  let mn=1e9,mx=-1e9;for(let i=i0;i<nF;i++){const b=bars[i];if(!b)continue;mn=Math.min(mn,b.l);mx=Math.max(mx,b.h)}
+  mn=Math.min(mn,fo.l);mx=Math.max(mx,fo.h);const pd=(mx-mn)*.1;mn-=pd;mx+=pd;
+  if(yLo==null){yLo=mn;yHi=mx}else{const k=1-Math.exp(-dt*2.5);yLo+=(mn-yLo)*k;yHi+=(mx-yHi)*k}
+  const Y=v=>pT+(yHi-v)/(yHi-yLo)*(pB-pT);
+  const OHi=CAPT+14,OLo=CAPB-14,YO=v=>oT+(OHi-v)/(OHi-OLo)*(oB-oT);
+
+  g.fillStyle=C.bg;g.fillRect(0,0,W,H);
+  // paneles
+  const g1=g.createLinearGradient(0,pT,0,pB);g1.addColorStop(0,'rgba(60,62,62,.28)');g1.addColorStop(1,'rgba(0,0,0,.35)');
+  g.fillStyle=g1;g.fillRect(0,pT,cR,pB-pT);
+  g.fillStyle='rgba(30,32,32,.5)';g.fillRect(0,oT,cR,oB-oT);
+  // grilla precio
+  const ps=nice(yHi-yLo,5);g.lineWidth=1;g.strokeStyle='rgba(226,235,235,.05)';
+  for(let v=Math.ceil(yLo/ps)*ps;v<yHi;v+=ps){const y=Math.round(Y(v))+.5;g.beginPath();g.moveTo(0,y);g.lineTo(cR,y);g.stroke()}
+  g.strokeStyle='rgba(226,235,235,.045)';
+  for(let i=Math.ceil(i0/10)*10;i<=nF+10;i+=10){const x=Math.round(xOf(i))+.5;if(x<0||x>cR)continue;g.beginPath();g.moveTo(x,pT);g.lineTo(x,oB);g.stroke()}
+
+  // ===== panel precio =====
+  g.save();g.beginPath();g.rect(0,pT,cR,pB-pT);g.clip();
+  // zonas S/R: ultimos pivotes confirmados (alto / bajo), cajas finas con precio
+  const lv=[];let ph=null,pl=null;
+  for(let i=nF-8;i>=Math.max(0,nF-190)&&(!ph||!pl);i--){const b=bars[i];if(!b)continue;let isH=true,isL=true;
+    for(let k=i-7;k<=i+7;k++){if(k===i||!bars[k])continue;if(bars[k].h>=b.h)isH=false;if(bars[k].l<=b.l)isL=false}
+    if(isH&&!ph)ph={i,p:b.h};if(isL&&!pl)pl={i,p:b.l}}
+  [[ph,C.bear,'#c9484a'],[pl,C.dBull,'#4a9b4d']].forEach(([z,c,solid])=>{if(!z)return;
+    const y=Y(z.p),x0=Math.max(0,xOf(z.i)),a=Math.min(1,(nF-z.i)/12);
+    g.globalAlpha=a;g.fillStyle=solid;g.fillRect(x0,y-3*u,cR-x0,6*u);
+    g.fillStyle='rgba(240,240,240,.85)';g.font=Math.round(9.5*u)+'px Arial,sans-serif';g.textAlign='right';g.textBaseline='bottom';g.fillText(fmt(z.p),cR-8*u,y-4*u);g.globalAlpha=1});
+  // velas
+  const cw=Math.max(2,step*.58),dc=(x,o,c,h,l)=>{const up=c>=o,col=up?C.orange:C.white;g.strokeStyle=col;g.fillStyle=col;g.lineWidth=Math.max(1,1.2*u);
+    g.beginPath();g.moveTo(x,Y(h));g.lineTo(x,Y(l));g.stroke();const a=Y(Math.max(o,c)),b2=Y(Math.min(o,c));g.fillRect(x-cw/2,a,cw,Math.max(1.5,b2-a))};
+  for(let i=i0;i<nF;i++){const b=bars[i];if(!b)continue;const x=xOf(i);if(x<-8)continue;dc(x,b.o,b.c,b.h,b.l)}
+  dc(xOf(nF),fb.o,fo.c,fo.h,fo.l);
+  // Top/Bottom replicados sobre el precio
+  for(let i=i0;i<nF;i++){const b=bars[i];if(!b||!(b.top||b.bot))continue;const x=xOf(i),sg=sigs.find(s=>s.i===i&&(s.t==='top'||s.t==='bot')),
+      age=sg?(now-sg.at)/1000:9,k=Math.min(1,age/.4),s2=age>=.4?1:Math.max(0,back(k)),y=b.top?Y(b.h)-9*u:Y(b.l)+9*u,col=b.top?C.bear:C.bull;
+    g.save();g.translate(x,y);g.scale(s2,s2);g.fillStyle=col;if(!lite){g.shadowColor=col;g.shadowBlur=8*u}g.beginPath();g.arc(0,0,3.6*u,0,T2);g.fill();g.restore()}
+  g.restore();
+
+  // ===== panel oscilador =====
+  g.save();g.beginPath();g.rect(0,oT,cR,oB-oT);g.clip();
+  // franjas extremas
+  g.fillStyle='rgba(255,59,92,.085)';g.fillRect(0,YO(CAPT),cR,YO(OB)-YO(CAPT));
+  g.fillStyle='rgba(0,229,176,.085)';g.fillRect(0,YO(OS),cR,YO(CAPB)-YO(OS));
+  g.setLineDash([3*u,4*u]);g.lineWidth=1;g.strokeStyle='rgba(255,59,92,.5)';g.beginPath();g.moveTo(0,YO(OB));g.lineTo(cR,YO(OB));g.stroke();
+  g.strokeStyle='rgba(0,229,176,.5)';g.beginPath();g.moveTo(0,YO(OS));g.lineTo(cR,YO(OS));g.stroke();
+  g.strokeStyle='rgba(160,165,165,.35)';g.beginPath();g.moveTo(0,YO(0));g.lineTo(cR,YO(0));g.stroke();g.setLineDash([]);
+  g.strokeStyle='rgba(226,235,235,.05)';[-40,40,80,-80].forEach(v=>{const y=Math.round(YO(v))+.5;g.beginPath();g.moveTo(0,y);g.lineTo(cR,y);g.stroke()});
+  // series
+  const pts=[];for(let i=i0;i<nF;i++){const b=bars[i];if(b)pts.push({x:xOf(i),s:b.score,t:b.trig,m:b.mf})}
+  pts.push({x:xOf(nF),s:sc.s,t:sc.t,m:sc.m});
+  const z0=YO(0);
+  // area Money Flow desde cero (turquesa/rojo)
+  for(let k=1;k<pts.length;k++){const a=pts[k-1],b=pts[k];g.fillStyle=(a.m+b.m)>=0?'rgba(0,229,176,.34)':'rgba(255,59,92,.34)';
+    g.beginPath();g.moveTo(a.x,z0);g.lineTo(a.x,YO(a.m));g.lineTo(b.x,YO(b.m));g.lineTo(b.x,z0);g.closePath();g.fill()}
+  // nube Score/Trigger
+  for(let k=1;k<pts.length;k++){const a=pts[k-1],b=pts[k];g.fillStyle=(a.s+b.s)>=(a.t+b.t)?'rgba(0,229,176,.16)':'rgba(255,59,92,.16)';
+    g.beginPath();g.moveTo(a.x,YO(a.s));g.lineTo(b.x,YO(b.s));g.lineTo(b.x,YO(b.t));g.lineTo(a.x,YO(a.t));g.closePath();g.fill()}
+  // linea Score (color segun Score vs Trigger)
+  g.lineWidth=1.7*u;g.lineJoin='round';g.lineCap='round';
+  for(let k=1;k<pts.length;k++){const a=pts[k-1],b=pts[k],bull=b.s>b.t;g.strokeStyle=bull?C.bull:C.bear;
+    if(!lite){g.shadowColor=bull?C.bull:C.bear;g.shadowBlur=5*u}
+    g.beginPath();g.moveTo(a.x,YO(a.s));g.lineTo(b.x,YO(b.s));g.stroke()}
+  g.shadowBlur=0;
+  // marcadores
+  const pop=(sg,fn)=>{const age=sg?(now-sg.at)/1000:9,k=Math.min(1,age/.45),s2=age>=.45?1:Math.max(0,back(k));return {age,s2}};
+  for(let i=i0;i<nF;i++){const b=bars[i];if(!b)continue;const x=xOf(i);
+    const find=t=>sigs.find(s=>s.i===i&&s.t===t);
+    if(b.top||b.bot){const sg=find(b.top?'top':'bot'),{age,s2}=pop(sg),col=b.top?C.bear:C.bull,y=YO(b.score);
+      if(age<1.2){g.save();g.globalAlpha=(1-age/1.2)*.7;g.strokeStyle=col;g.lineWidth=2*u;g.beginPath();g.arc(x,y,(5+age/1.2*26)*u,0,T2);g.stroke();g.restore()}
+      g.save();g.translate(x,y);g.scale(s2,s2);g.fillStyle=col;if(!lite){g.shadowColor=col;g.shadowBlur=9*u}g.beginPath();g.arc(0,0,4.2*u,0,T2);g.fill();g.restore()}
+    if(b.mom){const sg=find('mom'),{age,s2}=pop(sg);g.save();g.translate(x,z0);g.scale(s2,s2);g.fillStyle=C.mom;if(!lite){g.shadowColor=C.mom;g.shadowBlur=8*u}g.beginPath();g.arc(0,0,3.8*u,0,T2);g.fill();g.restore()}
+    if(b.divS||b.divB){const sg=find(b.divS?'divS':'divB'),{s2}=pop(sg),y=YO(b.score);g.save();g.translate(x,y+(b.divS?-9:9)*u);g.scale(s2,s2);g.fillStyle=b.divS?C.dBear:C.dBull;g.beginPath();
+      if(b.divS){g.moveTo(0,5*u);g.lineTo(-4.6*u,-3*u);g.lineTo(4.6*u,-3*u)}else{g.moveTo(0,-5*u);g.lineTo(-4.6*u,3*u);g.lineTo(4.6*u,3*u)}g.closePath();g.fill();g.restore()}
+  }
+  g.restore();
+
+  // ejes
+  g.fillStyle='#0d0e0e';g.fillRect(cR,0,axisW,H);g.strokeStyle='rgba(226,235,235,.12)';g.beginPath();g.moveTo(cR+.5,0);g.lineTo(cR+.5,H);g.stroke();
+  g.fillStyle='rgba(232,236,235,.6)';g.font=Math.round(10*u)+'px Arial,sans-serif';g.textAlign='center';g.textBaseline='middle';
+  for(let v=Math.ceil(yLo/ps)*ps;v<yHi;v+=ps){const y=Y(v);if(y>pT+7*u&&y<pB-7*u)g.fillText(fmt(v),cR+axisW/2,y)}
+  [-60,-40,0,40,60,80].forEach(v=>{if(v===60&&false)return;g.fillText(String(v).replace('-','−'),cR+axisW/2,YO(v))});
+  const yp=Y(fo.c);g.save();g.strokeStyle='#f1d92a';g.lineWidth=1;g.setLineDash([3*u,5*u]);g.beginPath();g.moveTo(0,yp);g.lineTo(cR,yp);g.stroke();g.restore();
+  g.fillStyle='#f1d92a';g.fillRect(cR,yp-9*u,axisW,18*u);g.fillStyle='#111';g.font='600 '+Math.round(10*u)+'px Arial,sans-serif';g.fillText(fmt(fo.c),cR+axisW/2,yp);
+  // etiqueta score actual
+  const ys=YO(sc.s),bull=sc.s>sc.t;g.fillStyle=bull?C.bull:C.bear;g.fillRect(cR,ys-8*u,axisW,16*u);g.fillStyle='#061311';g.fillText(sc.s.toFixed(1).replace('.',',').replace('-','−'),cR+axisW/2,ys);
+
+  // HUD
+  g.textAlign='left';g.textBaseline='middle';g.fillStyle='rgba(232,236,235,.62)';g.font='600 '+Math.round(11*u)+'px Arial,sans-serif';g.fillText('JT-Jesulito Oscilador',10*u,14*u);
+  g.fillStyle='rgba(232,236,235,.3)';g.font=Math.round(9*u)+'px Arial,sans-serif';if(W>=520)g.fillText('Score = WaveTrend + Money Flow · señales en tiempo real, sin esperar velas futuras',10*u,H-padB-6*u);
+
+  // toast
+  if(toast){const a=(now-toast.t)/1000;
+    if(a>2.6)toast=null;else{const al=a<.3?a/.3:a>2.1?(2.6-a)/.5:1,ty=pT+8*u+(1-ease(Math.min(1,a/.4)))*-14*u;
+      g.save();g.globalAlpha=al;g.font='600 '+Math.round(10.5*u)+'px Arial,sans-serif';let tw0=g.measureText(toast.txt).width;const maxW=cR-cL-14;if(tw0+34*u>maxW){const fz=parseFloat(g.font.match(/(\d+(?:\.\d+)?)px/)[1])*Math.max(.72,maxW/(tw0+34*u));g.font='600 '+fz.toFixed(1)+'px Arial,sans-serif';tw0=g.measureText(toast.txt).width}const tw=Math.min(tw0+34*u,maxW),tx=cL+(cR-cL)/2-tw/2;
+      rrect(tx,ty,tw,24*u,12*u);g.fillStyle='rgba(12,13,13,.9)';g.fill();g.strokeStyle='rgba(255,255,255,.14)';g.lineWidth=1;g.stroke();
+      g.fillStyle=toast.col;g.beginPath();g.arc(tx+13*u,ty+12*u,3.5*u,0,T2);g.fill();g.fillStyle='#e9ecec';g.textAlign='left';g.fillText(toast.txt,tx+24*u,ty+12.5*u);g.restore()}}
+}
+try{new IntersectionObserver(e=>{visible=e[0].isIntersecting;lastT=performance.now()},{threshold:0}).observe(cv)}catch(e){}
+addEventListener('message',e=>{if(e.data&&e.data.type==='jt-visibility')visible=!!e.data.visible});
+window.__JP={STAT,bars,sigs,get nF(){return nF}};
+requestAnimationFrame(frame);
+})();
+</script></body></html>
