@@ -1,18 +1,290 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es-CL">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>JesuAlgo — Indicadores propios de @JESUTRADER para TradingView</title>
-<meta name="description" content="JesuAlgo: 6 indicadores propios de JesuTrader para TradingView (tendencia, estructura y volatilidad) más la comunidad Trader Constructor: clases, tutoriales y análisis en vivo. Plan gratuito, mensual o anual.">
-<meta property="og:title" content="JesuAlgo — Indicadores propios para TradingView">
-<meta property="og:description" content="6 indicadores propios para TradingView más la comunidad Trader Constructor. Plan gratuito, mensual o anual.">
+<title>JesuAlgo | Indicadores para TradingView y comunidad de trading en Chile</title>
+<meta name="description" content="6 indicadores propios para TradingView (Jesutrail, Signals, Smart Money Concepts, Jesulito, MCI y Anomalías) y la comunidad Trader Constructor en Discord. Creado en Chile. Prueba 3 días gratis.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="author" content="Jesús · JesuAlgo">
+<meta name="theme-color" content="#050505">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_CL">
+<meta property="og:site_name" content="JesuAlgo">
+<meta property="og:title" content="JesuAlgo | Indicadores para TradingView">
+<meta property="og:description" content="6 indicadores propios para TradingView + la comunidad Trader Constructor. Prueba 3 días gratis.">
 <meta property="og:image" content="og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="JesuAlgo, indicadores para TradingView">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="JesuAlgo | Indicadores para TradingView">
+<meta name="twitter:description" content="6 indicadores propios para TradingView + la comunidad Trader Constructor.">
+<meta name="twitter:image" content="og-image.jpg">
+<!-- PENDIENTE DOMINIO .cl: agregar <link rel="canonical"> y og:url con la URL absoluta, y pasar og:image a URL absoluta -->
 <link rel="icon" type="image/png" href="favicon.png?v=2">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="preload" href="assets/fonts/SpaceGrotesk-700-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/InstrumentSerif-400-italic.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/fonts/fonts.css">  <!-- PERF v1 -->
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@graph": [
+  {
+   "@type": "Organization",
+   "@id": "#org",
+   "name": "JesuAlgo",
+   "alternateName": "Trader Constructor",
+   "description": "Indicadores propios para TradingView y comunidad de trading Trader Constructor en Discord.",
+   "logo": "assets/logo-footer.69fd2b2d.webp",
+   "founder": {
+    "@id": "#jesus"
+   },
+   "telephone": "+56965590120",
+ "contactPoint": {"@type": "ContactPoint", "telephone": "+56965590120", "contactType": "customer service", "availableLanguage": "es", "areaServed": "CL"},
+ "areaServed": "Worldwide",
+   "address": {
+    "@type": "PostalAddress",
+    "addressCountry": "CL"
+   },
+   "knowsLanguage": "es",
+   "sameAs": [
+    "https://www.instagram.com/jesualgo/"
+   ]
+  },
+  {
+   "@type": "Person",
+   "@id": "#jesus",
+   "name": "Jesús",
+   "jobTitle": "Trader y desarrollador de indicadores Pine Script",
+   "nationality": "CL",
+   "worksFor": {
+    "@id": "#org"
+   },
+   "image": "assets/jesus.ffe2b3ed.webp"
+  },
+  {
+   "@type": "WebSite",
+   "@id": "#web",
+   "name": "JesuAlgo",
+   "inLanguage": "es-CL",
+   "publisher": {
+    "@id": "#org"
+   }
+  },
+  {
+   "@type": "Product",
+   "@id": "#membresia",
+   "name": "Membresía Trader Constructor",
+   "description": "Acceso a los 6 indicadores VIP de JesuAlgo para TradingView, comunidad en Discord, clases, manuales y soporte.",
+   "brand": {
+    "@id": "#org"
+   },
+   "offers": [
+    {
+     "@type": "Offer",
+     "name": "Gratuito",
+     "price": "0",
+     "priceCurrency": "USD",
+     "url": "https://whop.com/jt-c3c6/jt-indicators/"
+    },
+    {
+     "@type": "Offer",
+     "name": "Mensual (3 días gratis)",
+     "price": "30",
+     "priceCurrency": "USD",
+     "url": "https://whop.com/checkout/plan_2IvvKbHc6AMEE",
+     "priceSpecification": {
+      "@type": "UnitPriceSpecification",
+      "price": "30",
+      "priceCurrency": "USD",
+      "billingDuration": "P1M"
+     }
+    },
+    {
+     "@type": "Offer",
+     "name": "Anual",
+     "price": "220",
+     "priceCurrency": "USD",
+     "url": "https://whop.com/checkout/plan_J3gwQfRtgAmRY",
+     "priceSpecification": {
+      "@type": "UnitPriceSpecification",
+      "price": "220",
+      "priceCurrency": "USD",
+      "billingDuration": "P1Y"
+     }
+    }
+   ]
+  },
+  {
+   "@type": "ItemList",
+   "name": "Indicadores JesuAlgo para TradingView",
+   "itemListElement": [
+    {
+     "@type": "ListItem",
+     "position": 1,
+     "item": {
+      "@type": "SoftwareApplication",
+      "name": "Jesutrail",
+      "description": "Nube de tendencia que se ajusta a la fuerza del mercado, detecta rupturas y marca la salida cuando la tendencia gira.",
+      "applicationCategory": "FinanceApplication",
+      "operatingSystem": "TradingView (web, escritorio y móvil)",
+      "author": {
+       "@id": "#jesus"
+      },
+      "inLanguage": "es"
+     }
+    },
+    {
+     "@type": "ListItem",
+     "position": 2,
+     "item": {
+      "@type": "SoftwareApplication",
+      "name": "Signals",
+      "description": "Señales visuales Buy/Sell en el punto donde el precio suele rebotar dentro de su rango.",
+      "applicationCategory": "FinanceApplication",
+      "operatingSystem": "TradingView (web, escritorio y móvil)",
+      "author": {
+       "@id": "#jesus"
+      },
+      "inLanguage": "es"
+     }
+    },
+    {
+     "@type": "ListItem",
+     "position": 3,
+     "item": {
+      "@type": "SoftwareApplication",
+      "name": "Smart Money Concepts",
+      "description": "Estructura de mercado, Order Blocks/Breaker, FVG/IFVG, zonas de liquidez y premium/discount.",
+      "applicationCategory": "FinanceApplication",
+      "operatingSystem": "TradingView (web, escritorio y móvil)",
+      "author": {
+       "@id": "#jesus"
+      },
+      "inLanguage": "es"
+     }
+    },
+    {
+     "@type": "ListItem",
+     "position": 4,
+     "item": {
+      "@type": "SoftwareApplication",
+      "name": "Jesulito Oscilador",
+      "description": "Muestra absorciones de volumen, divergencias de impulso y soportes/resistencias institucionales.",
+      "applicationCategory": "FinanceApplication",
+      "operatingSystem": "TradingView (web, escritorio y móvil)",
+      "author": {
+       "@id": "#jesus"
+      },
+      "inLanguage": "es"
+     }
+    },
+    {
+     "@type": "ListItem",
+     "position": 5,
+     "item": {
+      "@type": "SoftwareApplication",
+      "name": "MCI Oscilador",
+      "description": "Combina 7 filtros: order flow, money flow, volumen y volatilidad. Requiere TradingView Premium.",
+      "applicationCategory": "FinanceApplication",
+      "operatingSystem": "TradingView (web, escritorio y móvil)",
+      "author": {
+       "@id": "#jesus"
+      },
+      "inLanguage": "es"
+     }
+    },
+    {
+     "@type": "ListItem",
+     "position": 6,
+     "item": {
+      "@type": "SoftwareApplication",
+      "name": "Anomalías",
+      "description": "Detecta anomalías de rendimiento (z-score) para anticipar giros de momentum.",
+      "applicationCategory": "FinanceApplication",
+      "operatingSystem": "TradingView (web, escritorio y móvil)",
+      "author": {
+       "@id": "#jesus"
+      },
+      "inLanguage": "es"
+     }
+    }
+   ]
+  },
+  {
+   "@type": "FAQPage",
+   "mainEntity": [
+    {
+     "@type": "Question",
+     "name": "¿Necesito TradingView de pago?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Solo para el MCI Oscilador: TradingView muestra el order flow únicamente en sus planes de pago, así que requiere un plan Premium (limitación de la plataforma). Los otros 5 funcionan con la cuenta gratuita."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "¿Puedo cancelar la suscripción cuando quiera?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Sí. La suscripción se gestiona a través de Whop — cancelas cuando quieras desde ahí mismo, sin permanencia, y mantienes el acceso hasta el final del período ya pagado."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "¿En qué mercados funcionan los indicadores?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "En todos los que ofrece TradingView: cripto, acciones, índices y futuros."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "¿Cómo recibo el acceso después de pagar?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "El pago se procesa por Whop. Apenas se confirma, recibes el acceso al Discord de la comunidad, donde mediante tu nombre de usuario de TradingView se te otorga el acceso a los indicadores VIP."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "¿Los indicadores repintan?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Las señales se confirman al cierre de la vela y quedan fijas una vez cerrada. Son los mismos indicadores que uso en mi propio trading, ajustados con backtesting. Como toda herramienta de análisis, no garantizan resultados futuros."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "¿Sirve si soy principiante?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Sí. Además de los indicadores, la membresía incluye clases de backtesting, gestión de riesgo y Smart Money Concepts, más análisis en vivo en la comunidad para que no estés solo interpretando las señales."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "¿Quién está detrás de JesuAlgo y desde dónde opera?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "JesuAlgo es el proyecto de Jesús, trader y programador de Pine Script en Chile. Crea y mantiene los 6 indicadores para TradingView y dirige la comunidad Trader Constructor en Discord. Todo funciona 100% online, así que puedes unirte desde Chile o desde cualquier país."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "¿Garantizan resultados?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "No. El trading conlleva un alto riesgo de pérdida y los resultados pasados, incluidos los backtests, no garantizan resultados futuros. Los indicadores son herramientas de análisis con fines educativos e informativos, no asesoría financiera. Opera solo con capital que puedas permitirte perder."
+     }
+    }
+   ]
+  }
+ ]
+}
+</script>
 <style>
 :root{
   --bg:#050505; --fg:#f3efe9; --mut:#9a948b; --org:#ff6b35; --org2:#ff9a5c; --line:rgba(255,255,255,.1);
@@ -28,7 +300,7 @@ body{background:var(--bg);color:var(--fg);font-family:var(--disp);-webkit-font-s
 a{color:inherit;text-decoration:none}
 img,video{display:block;max-width:100%}
 ::selection{background:var(--org);color:#000}
-#gl{position:fixed;inset:0;width:100vw;height:100vh;z-index:0;pointer-events:none;transition:opacity .4s}
+#gl{position:fixed;inset:0;width:100vw;height:100vh;z-index:0;pointer-events:none;opacity:.2;transition:opacity .4s}
 .grain{position:fixed;inset:-50%;z-index:90;pointer-events:none;opacity:.07;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");animation:gr 1s steps(6) infinite}
 @keyframes gr{0%{transform:translate(0,0)}20%{transform:translate(-3%,2%)}40%{transform:translate(2%,-3%)}60%{transform:translate(-2%,-1%)}80%{transform:translate(3%,3%)}100%{transform:translate(0,0)}}
 .mono{font-family:var(--mono);font-size:.82rem;letter-spacing:.14em;text-transform:uppercase;color:var(--mut)}
@@ -66,12 +338,31 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
 @media(max-width:820px){.menu{display:none}}
 
 /* hero */
-#hero{position:relative;z-index:2;min-height:100vh;display:flex;flex-direction:column;justify-content:flex-end;padding:5.5rem var(--pad) 2rem}
+#hero{position:relative;z-index:2;overflow-x:clip;min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:7.5rem var(--pad) 5rem}
+#hero::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(90deg,rgba(5,5,5,.88) 0%,rgba(5,5,5,.6) 34%,rgba(5,5,5,0) 58%)}
+#hero>*{max-width:min(40rem,37vw)}
+/* HERO STAGE v1: indicadores reales en vivo como protagonista */
+#hero .hero-stage{position:absolute;top:0;bottom:0;right:var(--pad);width:min(49vw,calc((100vh - 15rem)*1.55));max-width:none;display:flex;align-items:center;pointer-events:none;padding-top:3rem}
+.stage-in{position:relative;width:100%;perspective:1700px}
+.stage-in::before{content:"";position:absolute;inset:-22% -14% -26% -22%;z-index:-1;background:radial-gradient(closest-side,rgba(255,107,53,.24),rgba(255,107,53,.07) 55%,transparent 75%)}
+.tilt{position:relative;transform:rotateY(-9deg) rotateX(3.5deg);transform-style:preserve-3d;will-change:transform}
+.win{padding:6px;border-radius:24px;background:linear-gradient(160deg,rgba(255,255,255,.11),rgba(255,255,255,.025) 45%,rgba(255,107,53,.1));border:1px solid rgba(255,255,255,.1);box-shadow:0 50px 110px -28px rgba(0,0,0,.9),0 0 90px -30px rgba(255,107,53,.5)}
+.win-in{position:relative;border-radius:18px;overflow:hidden;background:#090a0a;aspect-ratio:16/10.2;box-shadow:inset 0 1px 0 rgba(255,255,255,.12)}
+.win-in iframe{position:absolute;inset:0;width:100%;height:100%;border:0;pointer-events:none}
+.win-b{position:absolute;left:-4%;bottom:-9%;width:47%;transform:translateZ(70px);border-radius:18px;padding:5px}
+.win-b .win-in{border-radius:13px;aspect-ratio:16/11}
+.chip{position:absolute;z-index:3;display:flex;align-items:center;gap:.5rem;padding:.5rem .9rem;border-radius:99px;font-family:var(--mono);font-size:.74rem;letter-spacing:.12em;text-transform:uppercase;color:var(--fg);background:rgba(12,12,12,.9);border:1px solid rgba(255,255,255,.14);box-shadow:0 14px 34px -12px rgba(0,0,0,.9);white-space:nowrap}
+.chip i{width:7px;height:7px;border-radius:50%;background:var(--org);box-shadow:0 0 12px var(--org);animation:chipP 1.8s cubic-bezier(.32,.72,0,1) infinite}
+.chip.c1{top:-1.05rem;right:1.6rem;transform:translateZ(50px)}
+.chip.c2{left:-4%;bottom:calc(-9% - 1.05rem);margin-left:1.2rem;transform:translateZ(95px)}
+@keyframes chipP{50%{opacity:.35;transform:scale(.7)}}
+#hero .scrollhint{display:none}
 #hero .tag{margin-bottom:1.6rem;display:flex;gap:1rem;align-items:center}
 #hero .tag i{width:38px;height:1px;background:var(--org)}
-h1{font-size:min(9.2vw,13vh,8.6rem);line-height:.9;letter-spacing:-.055em;font-weight:700;max-width:14ch}
+h1{font-size:min(3.8vw,8.6vh,4.6rem);line-height:.95;letter-spacing:-.05em;font-weight:700;max-width:none}
+@media(min-width:821px){#hero h1{max-width:min(46vw,60rem)}}
 h1 .serif{color:var(--org);letter-spacing:-.04em;font-weight:400}
-.hero-sub{display:grid;grid-template-columns:minmax(0,34rem) auto;gap:3rem;align-items:end;justify-content:space-between;margin-top:1.2rem}
+.hero-sub{display:grid;grid-template-columns:minmax(0,32rem);gap:1.8rem;margin-top:1.8rem}
 .hero-sub p{color:#cbc5bb;line-height:1.45;font-size:1.18rem}
 .hero-sub p em{font-family:var(--serif);color:var(--org2);font-size:1.15em}
 .cta{display:flex;flex-direction:column;gap:.9rem;align-items:flex-start}
@@ -80,6 +371,7 @@ h1 .serif{color:var(--org);letter-spacing:-.04em;font-weight:400}
 .scrollhint{position:absolute;right:var(--pad);top:50%;writing-mode:vertical-rl;display:flex;align-items:center;gap:.8rem}
 .scrollhint i{width:1px;height:60px;background:linear-gradient(var(--org),transparent)}
 @media(max-width:820px){.hero-sub{grid-template-columns:1fr;gap:1.6rem}.scrollhint{display:none}}
+@media(min-width:821px) and (max-height:780px){#hero{padding:5.6rem var(--pad) 2rem}#hero .tag{margin-bottom:1rem}h1{font-size:min(4.2vw,8.4vh)}.hero-sub{margin-top:1.1rem;gap:1.1rem}.hero-sub p{font-size:1.02rem;line-height:1.4}.cta{gap:.6rem}#hero .hero-stage{width:min(49vw,calc((100vh - 11rem)*1.55));padding-top:2.2rem}}
 
 /* marquee */
 .mq{position:relative;z-index:2;border-block:1px solid var(--line);background:rgba(5,5,5,.75);backdrop-filter:blur(6px);overflow:hidden;padding:1.1rem 0;white-space:nowrap}
@@ -170,6 +462,7 @@ h2 .serif{color:var(--org)}
 /* community */
 #comunidad{position:relative;z-index:2;background:rgba(5,5,5,.6);padding:9rem var(--pad);border-top:1px solid var(--line);overflow:hidden}
 .com-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:4rem;align-items:center}
+.com-grid p b{color:#fff;font-weight:600}
 .com-grid p{color:#b8b2a8;line-height:1.6;max-width:38rem;margin-top:1.8rem;font-size:1.22rem}
 .bignum{font-size:min(22vw,36vh,20rem);font-weight:700;letter-spacing:-.07em;line-height:.8;color:transparent;-webkit-text-stroke:1.5px var(--org)}
 .bignum b{color:var(--org);-webkit-text-stroke:0}
@@ -230,6 +523,9 @@ h2 .serif{color:var(--org)}
 .facts div b{display:block;font-size:1.5rem;letter-spacing:-.03em}
 @media(max-width:820px){.about{grid-template-columns:1fr;gap:2.5rem}}
 
+.nap{font-style:normal;color:var(--mut);font-size:.85rem;line-height:1.7;margin:2rem 0 1rem;max-width:62rem}
+.nap b{color:var(--fg)}
+.nap a{color:var(--org)}
 /* faq */
 #faq{position:relative;z-index:2;background:rgba(8,7,6,.6);padding:8rem var(--pad);border-top:1px solid var(--line)}
 .faq{max-width:58rem;margin-top:3rem}
@@ -242,6 +538,7 @@ h2 .serif{color:var(--org)}
 .q.open button i{background:var(--org);border-color:var(--org)}
 .q.open button i:before,.q.open button i:after{background:#000}
 .q.open button i:after{transform:translate(-50%,-50%) rotate(0)}
+.q h3{font:inherit;margin:0}
 .q .a{height:0;overflow:hidden}
 .q .a p{padding:0 3rem 1.7rem 0;color:#b8b2a8;line-height:1.6;font-size:1.12rem}
 
@@ -261,8 +558,16 @@ footer{position:relative;z-index:2;background:rgba(5,5,5,.7);border-top:1px soli
 @media(max-width:820px){
   html{font-size:clamp(16px,4.5vw,19px)}
   #hero{min-height:100vh;min-height:100svh;justify-content:flex-start;padding:6.6rem var(--pad) 2.2rem}
+  #hero>*{max-width:none}
+  #hero .hero-stage{position:relative;right:auto;width:100%;display:block;padding-top:0;margin-top:2.2rem}
+  .tilt{transform:none}
+  .win-b,.chip.c2{display:none}
+  .win-in{aspect-ratio:4/3.3}
+  .chip.c1{right:1rem;font-size:.68rem}
+  .stage-in::before{inset:-10% -6%}
+  #hero::before{background:linear-gradient(180deg,rgba(5,5,5,.85) 0%,rgba(5,5,5,.55) 70%,rgba(5,5,5,0) 100%)}
   #hero .tag{margin-bottom:1.1rem}
-  h1{font-size:10.8vw;line-height:.92}
+  h1{font-size:8.6vw;line-height:.95}
   h2{font-size:8.6vw}
   .hero-sub{margin-top:1.4rem;gap:1.3rem}
   .hero-sub p{font-size:1.08rem;line-height:1.5}
@@ -323,18 +628,24 @@ footer{position:relative;z-index:2;background:rgba(5,5,5,.7);border-top:1px soli
 <canvas id="gl"></canvas>
 
 <nav>
-  <a class="brand" href="#top"><img src="assets/logo-footer.69fd2b2d.webp" alt="JesuAlgo"><span><b>JESU<span class="org">ALGO</span></b><small>por JesuTrader</small></span></a>
+  <a class="brand" href="#top"><img src="assets/logo-footer.69fd2b2d.webp" alt="Logo de JesuAlgo"><span><b>JESU<span class="org">ALGO</span></b><small>Indicadores · TradingView</small></span></a>
   <div class="menu"><a href="#indicadores">Indicadores</a><a href="#screener">Screener</a><a href="#comunidad">Comunidad</a><a href="#faq">FAQ</a><a href="#sobre-mi">Sobre mí</a></div>
   <a class="btn sm" data-mag href="#indicadores">Ver indicadores</a>
 </nav>
 
 <header id="hero">
   <div class="tag mono"><i></i>Indicadores propios · TradingView</div>
-  <h1><span class="line"><span>Deja de operar</span></span><span class="line"><span>a ciegas.</span></span><span class="line"><span>Empieza a <em class="serif">ver</em></span></span><span class="line"><span>el mercado.</span></span></h1>
+  <h1><span class="line"><span>Tendencia, estructura</span></span><span class="line"><span>y liquidez.</span></span><span class="line"><span>En un solo <em class="serif">gráfico.</em></span></span></h1>
   <div class="hero-sub">
-    <p class="rv">JesuAlgo es la suite de indicadores propios de JesuTrader (tendencia, estructura y volatilidad) — más la comunidad <em>Trader Constructor</em> (clases, tutoriales y análisis en vivo), todo en una sola membresía.</p>
+    <p class="rv">Tendencia, estructura SMC y volatilidad en 6 indicadores para TradingView, más la comunidad donde aprendes a usarlos.</p>
     <div class="cta rv"><div class="row"><a class="btn" data-mag href="#indicadores">Ver los 6 indicadores</a><a class="btn ghost" data-mag href="#membresia">Ver planes</a></div><small>Mensual o anual · cancela cuando quieras</small></div>
   </div>
+  <div class="hero-stage" aria-hidden="true"><div class="stage-in rv"><div class="tilt" id="tilt">
+    <span class="chip c1"><i></i>Jesutrail · en vivo</span>
+    <div class="win"><div class="win-in"><iframe data-src="embeds/jesutrail-live.html" title="Animación del indicador Jesutrail" aria-hidden="true" tabindex="-1"></iframe></div></div>
+    <div class="win win-b"><div class="win-in"><iframe data-src="embeds/signals-live.html" title="Animación del indicador Signals" aria-hidden="true" tabindex="-1"></iframe></div></div>
+    <span class="chip c2"><i></i>Signals</span>
+  </div></div></div>
   <div class="scrollhint mono"><i></i>Scroll</div>
 </header>
 
@@ -348,32 +659,32 @@ footer{position:relative;z-index:2;background:rgba(5,5,5,.7);border-top:1px soli
   <div class="hwrap" id="hwrap"><div class="htrack" id="htrack">
 
     <article class="card" id="producto-jesutrail" data-p="jesutrail" data-n="3" data-embed="embeds/jesutrail-live.html">
-      <div class="shot"><iframe title="" tabindex="-1" aria-hidden="true"></iframe><span class="n">01 / 06</span><img src="assets/jesutrail-1.0e79097d.webp" alt="Jesutrail" loading="lazy"><div class="thumbs"></div></div>
+      <div class="shot"><iframe title="Animación del indicador" tabindex="-1" aria-hidden="true"></iframe><span class="n">01 / 06</span><img src="assets/jesutrail-1.0e79097d.webp" alt="Indicador Jesutrail en TradingView: nube de tendencia que marca rupturas y salidas" loading="lazy"><div class="thumbs"></div></div>
       <div class="body"><h3>Jesutrail</h3><div class="sub">Sigue la tendencia y caza las rupturas</div><p>Una nube que se ajusta con la fuerza real del mercado: te mantiene dentro mientras la tendencia es clara, y te saca a tiempo cuando empieza a girar.</p><div class="tags"><span>Sigue tendencia</span><span>Salida a tiempo</span><span>Detecta rupturas</span></div></div>
     </article>
 
     <article class="card" id="producto-signals" data-p="signals" data-embed="embeds/signals-live.html" data-n="3">
-      <div class="shot"><iframe title="" tabindex="-1" aria-hidden="true"></iframe><span class="n">02 / 06</span><img src="assets/signals-1.d58db400.webp" alt="Signals" loading="lazy"><div class="thumbs"></div></div>
+      <div class="shot"><iframe title="Animación del indicador" tabindex="-1" aria-hidden="true"></iframe><span class="n">02 / 06</span><img src="assets/signals-1.d58db400.webp" alt="Indicador Signals en TradingView: señales Buy y Sell de rebote dentro del rango" loading="lazy"><div class="thumbs"></div></div>
       <div class="body"><h3>Signals</h3><div class="sub">Señales claras buy/sell</div><p>Marca el punto exacto donde el precio suele rebotar dentro de su rango, con una señal visual simple para entrar sin dudar.</p><div class="tags"><span>Rebote</span><span>Zonas de rango</span><span>Señal visual</span></div></div>
     </article>
 
     <article class="card" id="producto-accion-del-precio" data-p="accion-del-precio" data-embed="embeds/smc-live.html" data-n="3">
-      <div class="shot"><iframe title="" tabindex="-1" aria-hidden="true"></iframe><span class="n">03 / 06</span><img src="assets/accion-del-precio-1.0837b4f9.webp" alt="Smart Money Concepts" loading="lazy"><div class="thumbs"></div></div>
+      <div class="shot"><iframe title="Animación del indicador" tabindex="-1" aria-hidden="true"></iframe><span class="n">03 / 06</span><img src="assets/accion-del-precio-1.0837b4f9.webp" alt="Indicador Smart Money Concepts en TradingView: estructura, order blocks, FVG y liquidez" loading="lazy"><div class="thumbs"></div></div>
       <div class="body"><h3>Smart Money Concepts</h3><div class="sub">Estructura, order blocks y liquidez</div><p>Estructura de mercado, Order Blocks/Breaker, FVG/IFVG, zonas de liquidez y premium/discount — Smart Money Concepts en un solo indicador.</p><div class="tags"><span>SMC</span><span>Liquidez</span><span>Estructura</span></div></div>
     </article>
 
     <article class="card" id="producto-jesulito-pro" data-p="jesulito-pro" data-n="3" data-embed="embeds/jesulito-live.html">
-      <div class="shot"><iframe title="" tabindex="-1" aria-hidden="true"></iframe><span class="n">04 / 06</span><img src="assets/jesulito-pro-1.6b68af9b.webp" alt="Jesulito Oscilador" loading="lazy"><div class="thumbs"></div></div>
+      <div class="shot"><iframe title="Animación del indicador" tabindex="-1" aria-hidden="true"></iframe><span class="n">04 / 06</span><img src="assets/jesulito-pro-1.6b68af9b.webp" alt="Jesulito Oscilador en TradingView: absorciones de volumen, divergencias y soportes institucionales" loading="lazy"><div class="thumbs"></div></div>
       <div class="body"><h3>Jesulito Oscilador</h3><div class="sub">Ve lo que los grandes jugadores están haciendo</div><p>Jesulito Oscilador te muestra dónde el volumen absorbe el movimiento y dónde el precio agota su propio impulso, con soportes y resistencias institucionales.</p><div class="tags"><span>Absorciones</span><span>Divergencias</span><span>S/R institucional</span></div></div>
     </article>
 
     <article class="card" id="producto-mci-oscillator" data-p="mci-oscillator" data-embed="embeds/mci-oscillator.html" data-n="3">
-      <div class="shot"><iframe title="" tabindex="-1" aria-hidden="true"></iframe><span class="n">05 / 06</span><img src="assets/mci-oscillator-1.0e2d5804.webp" alt="MCI Oscilador" loading="lazy"><div class="thumbs"></div></div>
+      <div class="shot"><iframe title="Animación del indicador" tabindex="-1" aria-hidden="true"></iframe><span class="n">05 / 06</span><img src="assets/mci-oscillator-1.0e2d5804.webp" alt="MCI Oscilador en TradingView: panel de order flow, money flow, volumen y volatilidad" loading="lazy"><div class="thumbs"></div></div>
       <div class="body"><h3>MCI Oscilador</h3><div class="sub">Combina 7 filtros institucionales en un vistazo</div><p>Un panel que resume qué está pasando bajo el precio: flujo de órdenes, flujo de dinero, volumen y volatilidad — para saber si un movimiento tiene fuerza real o es solo ruido.</p><div class="tags"><span>Order flow</span><span>Money flow</span><span>Volatilidad</span><span class="prem">Requiere Premium</span></div></div>
     </article>
 
     <article class="card" id="producto-anomalias" data-p="anomalias" data-embed="embeds/anomalias.html" data-n="2">
-      <div class="shot"><iframe title="" tabindex="-1" aria-hidden="true"></iframe><span class="n">06 / 06</span><img src="assets/anomalias-1.1b2fa5a8.webp" alt="Anomalías" loading="lazy"><div class="thumbs"></div></div>
+      <div class="shot"><iframe title="Animación del indicador" tabindex="-1" aria-hidden="true"></iframe><span class="n">06 / 06</span><img src="assets/anomalias-1.1b2fa5a8.webp" alt="Indicador Anomalías en TradingView: z-score de rendimiento con zonas de compra y venta" loading="lazy"><div class="thumbs"></div></div>
       <div class="body"><h3>Anomalías</h3><div class="sub">Detecta momentum antes de que se note en el precio</div><p>Detecta anomalías en el rendimiento (z-score) para anticipar giros de momentum antes de que sean obvios en la vela — con zonas de compra/venta marcadas directo sobre el gráfico.</p><div class="tags"><span>Momentum</span><span>Z-score</span><span>Anticipación</span></div></div>
     </article>
 
@@ -408,8 +719,8 @@ footer{position:relative;z-index:2;background:rgba(5,5,5,.7);border-top:1px soli
   <div class="com-grid">
     <div>
       <div class="mono org">La comunidad</div>
-      <h2 style="margin-top:1.2rem"><span class="line"><span>No compras</span></span><span class="line"><span>un indicador.</span></span><span class="line"><span>Entras a <span class="serif">Trader Constructor</span></span></span></h2>
-      <p>Tu acceso te lleva a Trader Constructor: la comunidad donde comparto señales, análisis en vivo y clases. Los indicadores son las herramientas; la comunidad es donde aprendes a usarlas y no operas solo.</p>
+      <h2 style="margin-top:1.2rem"><span class="line"><span>El indicador</span></span><span class="line"><span>te da la señal.</span></span><span class="line"><span>Aquí aprendes a <span class="serif">leerla.</span></span></span></h2>
+      <p>Un indicador solo te muestra qué pasó en el gráfico. En <b>Trader Constructor</b> aprendes a interpretarlo: <b>clases</b> paso a paso, <b>tutoriales</b> de cada herramienta, <b>análisis de mercado</b> para ver cómo se aplica y <b>manuales</b> para repasar cuando quieras.</p>
       <div class="pills">
         <a class="soc" href="https://whop.com/jt-c3c6/jt-indicators/" target="_blank" rel="noopener noreferrer" data-mag aria-label="Unirse gratis al Discord">
           <svg class="soc-i float" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true"><rect x="2" y="2" width="60" height="60" rx="15" fill="#5865F2"/><g transform="translate(10,10) scale(1.8333)"><path fill="#fff" d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"/></g></svg>
@@ -446,7 +757,7 @@ footer{position:relative;z-index:2;background:rgba(5,5,5,.7);border-top:1px soli
 
 <section id="sobre-mi">
   <div class="about">
-    <div class="photo"><img src="assets/jesus.ffe2b3ed.webp" alt="Jesús, JesuTrader" loading="lazy"></div>
+    <div class="photo"><img src="assets/jesus.ffe2b3ed.webp" alt="Jesús, trader y creador de los indicadores JesuAlgo, desde Chile" loading="lazy"></div>
     <div class="txt">
       <div class="mono org">Sobre mí</div>
       <h2 style="margin-top:1.2rem"><span class="line"><span>Quién construye</span></span><span class="line"><span>estos <span class="serif">indicadores</span></span></span></h2>
@@ -462,27 +773,34 @@ footer{position:relative;z-index:2;background:rgba(5,5,5,.7);border-top:1px soli
   <h2><span class="line"><span>Preguntas</span></span><span class="line"><span><span class="serif">frecuentes</span></span></span></h2>
   <p class="mono" style="margin-top:1.2rem">Lo que la gente suele preguntar antes de unirse.</p>
   <div class="faq" id="faqlist">
-    <div class="q"><button>¿Necesito TradingView de pago?<i></i></button><div class="a"><p>Solo para el MCI Oscilador: TradingView muestra el order flow únicamente en sus planes de pago, así que requiere un plan Premium (limitación de la plataforma). Los otros 5 funcionan con la cuenta gratuita.</p></div></div>
-    <div class="q"><button>¿Puedo cancelar la suscripción cuando quiera?<i></i></button><div class="a"><p>Sí. La suscripción se gestiona a través de Whop — cancelas cuando quieras desde ahí mismo, sin permanencia, y mantienes el acceso hasta el final del período ya pagado.</p></div></div>
-    <div class="q"><button>¿En qué mercados funcionan los indicadores?<i></i></button><div class="a"><p>En todos los que ofrece TradingView: cripto, acciones, índices y futuros.</p></div></div>
-    <div class="q"><button>¿Cómo recibo el acceso después de pagar?<i></i></button><div class="a"><p>El pago se procesa por Whop. Apenas se confirma, recibes el acceso al Discord de la comunidad, donde mediante tu nombre de usuario de TradingView se te otorga el acceso a los indicadores VIP.</p></div></div>
-    <div class="q"><button>¿Los indicadores repintan?<i></i></button><div class="a"><p>Las señales se confirman al cierre de la vela y quedan fijas una vez cerrada. Son los mismos indicadores que uso en mi propio trading, ajustados con backtesting. Como toda herramienta de análisis, no garantizan resultados futuros.</p></div></div>
-    <div class="q"><button>¿Sirve si soy principiante?<i></i></button><div class="a"><p>Sí. Además de los indicadores, la membresía incluye clases de backtesting, gestión de riesgo y Smart Money Concepts, más análisis en vivo en la comunidad para que no estés solo interpretando las señales.</p></div></div>
-    <div class="q"><button>¿Garantizan resultados?<i></i></button><div class="a"><p>No. El trading conlleva un alto riesgo de pérdida y los resultados pasados, incluidos los backtests, no garantizan resultados futuros. Los indicadores son herramientas de análisis con fines educativos e informativos, no asesoría financiera. Opera solo con capital que puedas permitirte perder.</p></div></div>
+    <div class="q"><h3><button type="button" aria-expanded="false">¿Necesito TradingView de pago?<i aria-hidden="true"></i></button></h3><div class="a"><p>Solo para el MCI Oscilador: TradingView muestra el order flow únicamente en sus planes de pago, así que requiere un plan Premium (limitación de la plataforma). Los otros 5 funcionan con la cuenta gratuita.</p></div></div>
+    <div class="q"><h3><button type="button" aria-expanded="false">¿Puedo cancelar la suscripción cuando quiera?<i aria-hidden="true"></i></button></h3><div class="a"><p>Sí. La suscripción se gestiona a través de Whop — cancelas cuando quieras desde ahí mismo, sin permanencia, y mantienes el acceso hasta el final del período ya pagado.</p></div></div>
+    <div class="q"><h3><button type="button" aria-expanded="false">¿En qué mercados funcionan los indicadores?<i aria-hidden="true"></i></button></h3><div class="a"><p>En todos los que ofrece TradingView: cripto, acciones, índices y futuros.</p></div></div>
+    <div class="q"><h3><button type="button" aria-expanded="false">¿Cómo recibo el acceso después de pagar?<i aria-hidden="true"></i></button></h3><div class="a"><p>El pago se procesa por Whop. Apenas se confirma, recibes el acceso al Discord de la comunidad, donde mediante tu nombre de usuario de TradingView se te otorga el acceso a los indicadores VIP.</p></div></div>
+    <div class="q"><h3><button type="button" aria-expanded="false">¿Los indicadores repintan?<i aria-hidden="true"></i></button></h3><div class="a"><p>Las señales se confirman al cierre de la vela y quedan fijas una vez cerrada. Son los mismos indicadores que uso en mi propio trading, ajustados con backtesting. Como toda herramienta de análisis, no garantizan resultados futuros.</p></div></div>
+    <div class="q"><h3><button type="button" aria-expanded="false">¿Sirve si soy principiante?<i aria-hidden="true"></i></button></h3><div class="a"><p>Sí. Además de los indicadores, la membresía incluye clases de backtesting, gestión de riesgo y Smart Money Concepts, más análisis en vivo en la comunidad para que no estés solo interpretando las señales.</p></div></div>
+    <div class="q"><h3><button type="button" aria-expanded="false">¿Quién está detrás de JesuAlgo y desde dónde opera?<i aria-hidden="true"></i></button></h3><div class="a"><p>JesuAlgo es el proyecto de Jesús, trader y programador de Pine Script en Chile. Crea y mantiene los 6 indicadores para TradingView y dirige la comunidad Trader Constructor en Discord. Todo funciona 100% online, así que puedes unirte desde Chile o desde cualquier país.</p></div></div>
+    <div class="q"><h3><button type="button" aria-expanded="false">¿Garantizan resultados?<i aria-hidden="true"></i></button></h3><div class="a"><p>No. El trading conlleva un alto riesgo de pérdida y los resultados pasados, incluidos los backtests, no garantizan resultados futuros. Los indicadores son herramientas de análisis con fines educativos e informativos, no asesoría financiera. Opera solo con capital que puedas permitirte perder.</p></div></div>
   </div>
 </section>
 
 <footer>
   <div class="fgrid">
-    <a class="brand" href="#top"><img src="assets/logo-footer.69fd2b2d.webp" alt=""><span><b>JESU<span class="org">ALGO</span></b><small>por JesuTrader</small></span></a>
-    <nav><a href="#indicadores">Indicadores</a><a href="#membresia">Membresía</a><a href="#como-funciona">Cómo funciona</a><a href="#sobre-mi">Sobre mí</a><a href="https://www.instagram.com/jesutraderchile/">Instagram</a></nav>
+    <a class="brand" href="#top"><img src="assets/logo-footer.69fd2b2d.webp" alt=""><span><b>JESU<span class="org">ALGO</span></b><small>Indicadores · TradingView</small></span></a>
+    <nav><a href="#indicadores">Indicadores</a><a href="#membresia">Membresía</a><a href="#como-funciona">Cómo funciona</a><a href="#sobre-mi">Sobre mí</a><a href="https://www.instagram.com/jesualgo/">Instagram</a></nav>
   </div>
   <div class="giant">Jesu<b>algo</b></div>
+  <address class="nap">
+    <b>JesuAlgo</b> · Indicadores para TradingView y comunidad Trader Constructor · Creado por Jesús · <span>Chile</span> (servicio 100% online)
+    <!-- PENDIENTE: <span>Comuna, Región</span> -->
+    · Teléfono / WhatsApp <a href="https://wa.me/56965590120" rel="noopener">+56 9 6559 0120</a>
+    · Instagram <a href="https://www.instagram.com/jesualgo/" rel="noopener">@jesualgo</a>
+    · Discord <a href="https://whop.com/jt-c3c6/jt-indicators/" rel="noopener">Trader Constructor</a>
+  </address>
   <p class="risk">Aviso de riesgo: El trading y la inversión en criptomonedas, acciones, futuros y otros instrumentos conllevan un alto riesgo de pérdida y no son adecuados para todos los inversores. Los indicadores de JesuAlgo son herramientas de análisis técnico con fines educativos e informativos; no constituyen asesoría financiera ni recomendación de compra o venta. El rendimiento pasado, incluidos los backtests, no garantiza resultados futuros. Opera solo con capital que puedas permitirte perder.</p>
-  <p class="copy">© 2026 JesuAlgo · @JESUTRADER. Todos los derechos reservados.</p>
+  <p class="copy">© 2026 JesuAlgo · @JESUALGO. Todos los derechos reservados.</p>
 </footer>
 
-<script src="assets/vendor/three.min.js"></script>
 <script src="assets/vendor/gsap.min.js"></script>
 <script src="assets/vendor/ScrollTrigger.min.js"></script>
 <script src="assets/vendor/lenis.min.js"></script>
@@ -506,23 +824,24 @@ document.querySelectorAll('a[href^="#"]').forEach(a => a.addEventListener('click
 
 /* ---------- Three: mercado 3D (velas + trail naranja) ---------- */
 const canvas = document.getElementById('gl');
-let renderer;
-try { renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:true, powerPreference:'high-performance'}); } catch(e) { canvas.style.display='none'; }
+let renderer;  /* PERF v2: three.js se carga diferido y solo en escritorio */
 const state = {p:0, mx:0, my:0, tx:0, ty:0, vis:1};
+function initGL() {
+try { renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:true, powerPreference:'high-performance'}); } catch(e) { canvas.style.display='none'; }
 if (renderer) {
-  renderer.setPixelRatio(Math.min(devicePixelRatio, 1.75));
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 1.1));
   const scene = new THREE.Scene();
   scene.fog = new THREE.FogExp2(0x050505, 0.028);
   const camera = new THREE.PerspectiveCamera(48, 1, .1, 300);
 
   const N = 220, SP = .62;
   // precio: random walk con tendencia y giros (determinista)
-  let seed = 7; const rnd = () => (seed = (seed*16807) % 2147483647) / 2147483647;
-  const cs = []; let price = 0, drift = .05;
+  let seed = 11; const rnd = () => (seed = (seed*16807) % 2147483647) / 2147483647;
+  const cs = []; let price = 0, drift = .075;
   for (let i=0;i<N;i++){
-    if (i%34===0) drift = (rnd()-.42)*.16;
-    const o = price, c = o + drift + (rnd()-.5)*.9;
-    const h = Math.max(o,c) + rnd()*.5, l = Math.min(o,c) - rnd()*.5;
+    if (i%34===0) drift = (rnd()-.42)*.24;
+    const o = price, c = o + drift + (rnd()-.5)*1.35;
+    const h = Math.max(o,c) + rnd()*.75, l = Math.min(o,c) - rnd()*.75;
     cs.push({o,c,h,l}); price = c;
   }
   const bodyG = new THREE.BoxGeometry(.34,1,.34), wickG = new THREE.BoxGeometry(.04,1,.04);
@@ -542,16 +861,46 @@ if (renderer) {
   for (let i=id;i<N;i++) dn.setMatrixAt(i, zero);
   up.instanceMatrix.needsUpdate = dn.instanceMatrix.needsUpdate = wk.instanceMatrix.needsUpdate = true;
 
-  // Trail naranja (media móvil suavizada) como tubo
+  // camino suave: solo guia a la camara
   const pts = []; let ema = cs[0].c;
-  cs.forEach((k,i) => { ema += (k.c-ema)*.16; pts.push(new THREE.Vector3(i*SP, ema+.0, .35)); });
+  cs.forEach((k,i) => { ema += (k.c-ema)*.16; pts.push(new THREE.Vector3(i*SP, ema, .35)); });
+  // Trail: stop dinamico por ATR (bajo el precio en alza, sobre el precio en baja)
+  let atr = 1, dir = 1, stop = cs[0].c - 2, cur = null; const segs = [], flips = [];
+  cs.forEach((k,i) => {
+    atr += ((k.h-k.l) - atr)*.1; const d = atr*1.7;
+    if (dir>0) { stop = Math.max(stop, k.c-d); if (k.c < stop) { dir=-1; stop = k.h+d*.6; cur=null; flips.push({i,dir}); } }
+    else { stop = Math.min(stop, k.c+d); if (k.c > stop) { dir=1; stop = k.l-d*.6; cur=null; flips.push({i,dir}); } }
+    if (!cur) { cur = {dir, p:[], c:[]}; segs.push(cur); }
+    cur.p.push(new THREE.Vector3(i*SP, stop, .3)); cur.c.push((k.o+k.c)/2);
+  });
   const trailMat = new THREE.MeshStandardMaterial({color:0xff6b35, emissive:0xff6b35, emissiveIntensity:1.6, roughness:.3});
-  const trail = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 600, .055, 8, false), trailMat);
-  group.add(trail);
-  // halo del trail (aditivo, más grueso)
-  const halo = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 400, .22, 8, false),
-    new THREE.MeshBasicMaterial({color:0xff6b35, transparent:true, opacity:.12, blending:THREE.AdditiveBlending, depthWrite:false}));
-  group.add(halo);
+  const bearMat = new THREE.MeshStandardMaterial({color:0xe5484d, emissive:0xe5484d, emissiveIntensity:1.4, roughness:.3});
+  segs.forEach(sg => {
+    if (sg.p.length < 3) return;
+    const col = sg.dir>0 ? 0xff6b35 : 0xe5484d, curve = new THREE.CatmullRomCurve3(sg.p, false, 'catmullrom', .15);
+    group.add(new THREE.Mesh(new THREE.TubeGeometry(curve, sg.p.length*5, .05, 8, false), sg.dir>0 ? trailMat : bearMat));
+    group.add(new THREE.Mesh(new THREE.TubeGeometry(curve, sg.p.length*4, .2, 8, false),
+      new THREE.MeshBasicMaterial({color:col, transparent:true, opacity:.13, blending:THREE.AdditiveBlending, depthWrite:false})));
+    // relleno luminoso entre el trail y el precio
+    const n = sg.p.length, pos = new Float32Array(n*6), colr = new Float32Array(n*6), idx = [], c3 = new THREE.Color(col);
+    for (let i=0;i<n;i++){
+      const v = sg.p[i];
+      pos.set([v.x, v.y, 0, v.x, sg.c[i], 0], i*6);
+      colr.set([c3.r*.42, c3.g*.42, c3.b*.42, 0, 0, 0], i*6);
+      if (i<n-1) idx.push(i*2, i*2+1, i*2+2, i*2+1, i*2+3, i*2+2);
+    }
+    const fg = new THREE.BufferGeometry();
+    fg.setAttribute('position', new THREE.BufferAttribute(pos,3)); fg.setAttribute('color', new THREE.BufferAttribute(colr,3)); fg.setIndex(idx);
+    group.add(new THREE.Mesh(fg, new THREE.MeshBasicMaterial({vertexColors:true, transparent:true, blending:THREE.AdditiveBlending, depthWrite:false, side:THREE.DoubleSide})));
+  });
+  // etiquetas Buy / Sell (blancas) en cada giro
+  const mkLabel = txt => { const c = document.createElement('canvas'); c.width = 256; c.height = 128; const g = c.getContext('2d');
+    g.fillStyle = '#f3efe9'; g.beginPath(); g.roundRect(28, 26, 200, 76, 22); g.fill();
+    g.fillStyle = '#0b0b0b'; g.font = '700 50px "Space Grotesk",system-ui,sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(txt, 128, 66);
+    return new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c), transparent:true, depthWrite:false, fog:false}); };
+  const buyM = mkLabel('Buy'), sellM = mkLabel('Sell');
+  flips.forEach(f => { const k = cs[f.i], sp = new THREE.Sprite(f.dir>0 ? buyM : sellM);
+    sp.scale.set(1.5, .75, 1); sp.position.set(f.i*SP, f.dir>0 ? k.l-.95 : k.h+.95, .5); group.add(sp); });
   // zonas (FVG / order block) como planos translúcidos
   [[28,40,0xff6b35],[84,98,0x2fbf8f],[140,156,0xe5484d],[186,200,0xff6b35]].forEach(([a,b,col]) => {
     const w = (b-a)*SP, ya = cs[a].c, pl = new THREE.Mesh(new THREE.PlaneGeometry(w, 1.5),
@@ -573,29 +922,44 @@ if (renderer) {
   const l1 = new THREE.DirectionalLight(0xff6b35, 2.6); l1.position.set(-6,10,12); scene.add(l1);
   const l2 = new THREE.DirectionalLight(0x6f8cff, 1.1); l2.position.set(10,-4,-8); scene.add(l2);
 
-  const resize = () => { renderer.setSize(innerWidth, innerHeight, false); camera.aspect = innerWidth/innerHeight; if (innerWidth>820) camera.setViewOffset(innerWidth, innerHeight, -innerWidth*.16, innerHeight*.14, innerWidth, innerHeight); else camera.setViewOffset(innerWidth, innerHeight, 0, -innerHeight*.52, innerWidth, innerHeight); camera.updateProjectionMatrix(); };
+  const resize = () => { renderer.setSize(innerWidth, innerHeight, false); camera.aspect = innerWidth/innerHeight; if (innerWidth>820) camera.setViewOffset(innerWidth, innerHeight, -innerWidth*.13, innerHeight*.04, innerWidth, innerHeight); else camera.setViewOffset(innerWidth, innerHeight, 0, -innerHeight*.52, innerWidth, innerHeight); camera.updateProjectionMatrix(); };
   addEventListener('resize', resize); resize();
 
-  const span = (N-26)*SP;
+  const span = (N-44)*SP;
   const yAt = x => { const i = Math.max(0, Math.min(N-1, Math.round(x/SP))); return pts[i].y; };
   const clock = new THREE.Clock();
-  renderer.setAnimationLoop(() => {
-    if (!state.vis) return;
+  const vA = new THREE.Vector3(), vB = new THREE.Vector3(), lA = new THREE.Vector3(), lB = new THREE.Vector3();
+  let lastR = 0;
+  renderer.setAnimationLoop(now => {
+    if (!state.vis || now - lastR < 33) return; lastR = now;
     const t = clock.getElapsedTime();
     state.mx += (state.tx-state.mx)*.05; state.my += (state.ty-state.my)*.05;
-    const x = 4 + state.p*span;
+    const x = 14 + state.p*span;
     const y = yAt(x) ;
-    // la cámara vuela siguiendo el precio, cambia de ángulo con el scroll
+    // hero: vista amplia y frontal del grafico; al bajar, la camara entra a volar siguiendo el precio
+    const hs = Math.min(1, scrollY/(innerHeight*.9)), hk = hs*hs*(3-2*hs);
+    const yh = yAt(x+9);
+    vA.set(x + 2.5 + Math.sin(t*.22)*.7 + state.mx*1.4, yh + 1.5 + Math.sin(t*.31)*.25 - state.my*.9, 11);
+    lA.set(x + 10, yh + .1, 0);
     const ang = .35 + Math.sin(state.p*Math.PI*2)*.5;
-    camera.position.set(x - 4 + state.mx*1.2, y + 2.2 + Math.sin(state.p*Math.PI*3)*1.0 - state.my*.8, 6.5 + Math.sin(ang)*1.5);
-    camera.lookAt(x + 6, y + .1, 0);
+    vB.set(x - 4 + state.mx*1.2, y + 2.2 + Math.sin(state.p*Math.PI*3)*1.0 - state.my*.8, 6.5 + Math.sin(ang)*1.5);
+    lB.set(x + 6, y + .1, 0);
+    camera.position.lerpVectors(vA, vB, hk);
+    camera.lookAt(lA.lerp(lB, hk));
     camera.rotation.z += Math.sin(t*.4)*.0006;
     parts.rotation.y = t*.01;
-    trailMat.emissiveIntensity = 1.4 + Math.sin(t*2)*.35;
+    trailMat.emissiveIntensity = 1.4 + Math.sin(t*2)*.35; bearMat.emissiveIntensity = 1.2 + Math.sin(t*2)*.3;
     renderer.render(scene, camera);
   });
   // pausar si no se ve
   document.addEventListener('visibilitychange', () => state.vis = document.hidden ? 0 : 1);
+}
+}
+/* celular o 'reducir movimiento': sin 3D (ahorra 670 KB y ~300 ms de bloqueo). Escritorio: carga tras la intro. */
+if (innerWidth <= 820) canvas.style.display = 'none';
+else {
+  const loadThree = () => { const sc = document.createElement('script'); sc.src = 'assets/vendor/three.min.js'; sc.onload = initGL; sc.onerror = () => canvas.style.display = 'none'; document.head.appendChild(sc); };
+  addEventListener('load', () => (window.requestIdleCallback || (f => setTimeout(f, 300)))(loadThree, {timeout:1500}), {once:true});
 }
 
 addEventListener('pointermove', e => {
@@ -603,8 +967,21 @@ addEventListener('pointermove', e => {
   if (fine) gsap.to('#cur', {x:e.clientX, y:e.clientY, duration:.25, ease:'power3.out'});
 });
 ScrollTrigger.create({trigger:document.body, start:'top top', end:'bottom bottom', scrub:true, onUpdate:s => state.p = s.progress});
+/* hero stage: carga los indicadores en vivo, los pausa fuera de pantalla y les da parallax */
+(() => {
+  const stage = document.querySelector('.hero-stage'); if (!stage) return;
+  const frames = [...stage.querySelectorAll('iframe')].filter(f => f.offsetParent !== null);
+  const go = () => frames.forEach(f => { if (!f.src) f.src = f.dataset.src; });
+  addEventListener('load', () => setTimeout(go, 1200), {once:true}); setTimeout(go, 4000);
+  new IntersectionObserver(es => es.forEach(e => frames.forEach(f => { try { f.contentWindow.postMessage({type:'jt-visibility', visible:e.isIntersecting}, '*'); } catch(_){} })), {threshold:.05}).observe(stage);
+  if (fine && !reduce && innerWidth > 820) {
+    const ry = gsap.quickTo('#tilt', 'rotationY', {duration:1.1, ease:'power3.out'}), rx = gsap.quickTo('#tilt', 'rotationX', {duration:1.1, ease:'power3.out'});
+    addEventListener('pointermove', e => { ry(-9 + (e.clientX/innerWidth*2-1)*4); rx(3.5 - (e.clientY/innerHeight*2-1)*3); });
+    gsap.to('#tilt', {yPercent:-7, ease:'none', scrollTrigger:{trigger:'#hero', start:'top top', end:'bottom top', scrub:true}});
+  }
+})();
 // el canvas se atenúa tras el hero para dar lectura al texto
-gsap.to('#gl', {opacity:.55, ease:'none', scrollTrigger:{trigger:'.mq', start:'top 90%', end:'top 20%', scrub:true}});
+gsap.fromTo('#gl', {opacity:.2}, {opacity:.55, ease:'none', scrollTrigger:{trigger:'.mq', start:'top 90%', end:'top 20%', scrub:true}});
 
 /* ---------- Cursor hover + botones magnéticos ---------- */
 if (fine && !reduce) {
@@ -657,7 +1034,7 @@ document.querySelectorAll('.card[data-p]').forEach(card => {
   const list = files[card.dataset.p], img = card.querySelector('.shot img'), box = card.querySelector('.thumbs'),
         vid = card.querySelector('video'), ifr = card.querySelector('iframe');
     const btns = [];
-  list.forEach((f,i) => { const b = document.createElement('button'); b.style.backgroundImage = `url(assets/${f}.webp)`; btns.push(b);
+  list.forEach((f,i) => { const b = document.createElement('button'); b.type = 'button'; b.setAttribute('aria-label', 'Ver captura ' + (i+1)); b.style.backgroundImage = `url(assets/${f}.webp)`; btns.push(b);
     b.addEventListener('click', () => { const was = b.classList.contains('on'); btns.forEach(x => x.classList.remove('on')); if (was) { img.classList.remove('show'); } else { img.src = `assets/${f}.webp`; img.classList.add('show'); b.classList.add('on'); } });
     box.appendChild(b); });
   // carga la animacion solo cuando la tarjeta entra en pantalla
@@ -739,7 +1116,7 @@ const bar = document.createElement('div'); bar.className = 'scr-bar'; bar.innerH
 const reduce = matchMedia('(prefers-reduced-motion:reduce)').matches;
 const cls = d => d>0 ? 'g' : d<0 ? 'r' : 'n';
 function put(c, text, d, old){ const nc = 'scr-c ' + cls(d) + (old ? ' old' : '') + (c.classList.contains('scr-tot') ? ' scr-tot' : '');
-  if (c.textContent !== text) { c.textContent = text; if (!reduce) { c.classList.remove('fl'); void c.offsetWidth; c.classList.add('fl'); } }
+  if (c.textContent !== text) { c.textContent = text; if (true) { c.classList.remove('fl'); void c.offsetWidth; c.classList.add('fl'); } }
   c.className = nc + (c.classList.contains('fl') ? ' fl' : ''); }
 
 function render(){
@@ -757,7 +1134,7 @@ render();
 
 // corre solo mientras la seccion esta en pantalla
 let timers = [];
-const start = () => { if (timers.length || reduce) return; timers = CFG.map(c => setInterval(() => { tick(st[c.k], c); render(); }, c.tick)); };
+const start = () => { if (timers.length) return; timers = CFG.map(c => setInterval(() => { tick(st[c.k], c); render(); }, c.tick)); };
 const stop = () => { timers.forEach(clearInterval); timers = []; };
 new IntersectionObserver(e => e[0].isIntersecting ? start() : stop(), {threshold:.15}).observe(root);
 document.addEventListener('visibilitychange', () => document.hidden ? stop() : (root.getBoundingClientRect().top < innerHeight && root.getBoundingClientRect().bottom > 0 && start()));
@@ -788,8 +1165,8 @@ document.querySelectorAll('.q').forEach(q => {
   const a = q.querySelector('.a');
   q.querySelector('button').addEventListener('click', () => {
     const open = q.classList.contains('open');
-    document.querySelectorAll('.q.open').forEach(o => { o.classList.remove('open'); gsap.to(o.querySelector('.a'), {height:0, duration:.5, ease:'power3.inOut'}); });
-    if (!open) { q.classList.add('open'); gsap.to(a, {height:'auto', duration:.55, ease:'power3.out', onUpdate:() => ScrollTrigger.refresh()}); }
+    document.querySelectorAll('.q.open').forEach(o => { o.classList.remove('open'); o.querySelector('button').setAttribute('aria-expanded','false'); gsap.to(o.querySelector('.a'), {height:0, duration:.5, ease:'power3.inOut'}); });
+    if (!open) { q.classList.add('open'); q.querySelector('button').setAttribute('aria-expanded','true'); gsap.to(a, {height:'auto', duration:.55, ease:'power3.out', onUpdate:() => ScrollTrigger.refresh()}); }
   });
 });
 
@@ -804,10 +1181,10 @@ let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() 
 const pct = document.getElementById('pct'), bar = document.getElementById('bar'), L = {n:0};
 gsap.set('#hero .line>span', {yPercent:115}); gsap.set('#hero .rv, #hero .tag, nav', {opacity:0, y:30});
 gsap.timeline()
-  .to(L, {n:100, duration:reduce?.2:1.7, ease:'power2.inOut', onUpdate:() => { pct.textContent = Math.round(L.n)+'%'; bar.style.width = L.n+'%'; }})
-  .to('#pre', {yPercent:-100, duration:.9, ease:'power4.inOut'})
-  .to('#hero .line>span', {yPercent:0, duration:1.3, ease:'power4.out', stagger:.1}, '-=.35')
-  .to('#hero .tag, #hero .rv, nav', {opacity:1, y:0, duration:1, ease:'power3.out', stagger:.1}, '-=.9')
+  .to(L, {n:100, duration:reduce?.2:.55, ease:'power2.inOut', onUpdate:() => { pct.textContent = Math.round(L.n)+'%'; bar.style.width = L.n+'%'; }})
+  .to('#pre', {yPercent:-100, duration:.6, ease:'power4.inOut'})
+  .to('#hero .line>span', {yPercent:0, duration:1, ease:'power4.out', stagger:.08}, '-=.3')
+  .to('#hero .tag, #hero .rv, nav', {opacity:1, y:0, duration:.8, ease:'power3.out', stagger:.08}, '-=.8')
   .add(() => { lenis.start(); document.getElementById('pre').remove(); });
 })();
 </script>

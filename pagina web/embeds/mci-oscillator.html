@@ -1,12 +1,13 @@
 <!doctype html>
-<html lang="es">
+<html lang="es-CL">
 <head>
+<meta name="robots" content="noindex">
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>MCI v5.5 · Oscillator Loop</title>
   <style>
     *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;background:#050608;overflow:hidden}body{display:grid;place-items:center;font-family:Arial,Helvetica,sans-serif}.stage{width:min(100vw,1920px);aspect-ratio:16/9;background:#050608;position:relative;overflow:hidden}svg{width:100%;height:100%;display:block}.axis{font-size:18px;fill:#a3a4a8}.tiny{font-size:15px;fill:#888b92;letter-spacing:.08em}.mono{font-family:Consolas,monospace}.grid{stroke:#16181b;stroke-width:1}.gridStrong{stroke:#2b2d30;stroke-width:1}.zero{stroke:#8d2c3c;stroke-width:1.5;stroke-dasharray:5 4;opacity:.85}.bandTop{fill:#6b141d;opacity:.26}.bandBottom{fill:#0f461f;opacity:.32}.white{fill:#ebebeb}.gold{fill:#c88910}.green{fill:#009d74}.red{fill:#9f2539}.yellow{fill:#f1ce28}</style>
-<style>@media (prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}</style></head>
+<style>@media not all{*,*:before,*:after{animation:none!important;transition:none!important}}</style></head>
 <body>
 <main class="stage" aria-label="Loop animado del oscilador MCI v5.5">
 <svg id="scene" viewBox="0 0 1920 1080" role="img">
@@ -49,7 +50,7 @@
   <circle id="playDot" cx="80" cy="1026" r="7" fill="#e8df2a"/><line x1="80" y1="1026" x2="1770" y2="1026" stroke="#242629"/>
 </svg>
 </main>
-<script>(function(){var c=matchMedia('(pointer: coarse)').matches,m=navigator.deviceMemory||8,k=navigator.hardwareConcurrency||8,lite=c||m<=4||k<=4;window.JT={lite:lite,fi:lite?1000/24:1000/40,hold:0,ok:function(now){if(now<JT.hold||now-JT.last<JT.fi)return false;JT.last=now;return true},last:-1e9,noShadow:function(g){if(!lite)return;try{Object.defineProperty(g,'shadowBlur',{set:function(){},get:function(){return 0}})}catch(e){}}};addEventListener('message',function(e){if(e.source!==parent||!e.data)return;if(e.data.type==='jt-hold')JT.hold=performance.now()+(e.data.ms||300)});})();</script><script>(function(){if(!matchMedia('(prefers-reduced-motion: reduce)').matches)return;var r=window.requestAnimationFrame.bind(window),n=0;window.requestAnimationFrame=function(f){return n++<3?r(f):0}})();</script><script>
+<script>(function(){var c=matchMedia('(pointer: coarse)').matches,m=navigator.deviceMemory||8,k=navigator.hardwareConcurrency||8,lite=c||m<=4||k<=4;window.JT={lite:lite,fi:lite?1000/24:1000/40,hold:0,ok:function(now){if(now<JT.hold||now-JT.last<JT.fi)return false;JT.last=now;return true},last:-1e9,noShadow:function(g){if(!lite)return;try{Object.defineProperty(g,'shadowBlur',{set:function(){},get:function(){return 0}})}catch(e){}}};addEventListener('message',function(e){if(e.source!==parent||!e.data)return;if(e.data.type==='jt-hold')JT.hold=performance.now()+(e.data.ms||300)});})();</script><script>(function(){return;/* demo: siempre animada */var r=window.requestAnimationFrame.bind(window),n=0;window.requestAnimationFrame=function(f){return n++<3?r(f):0}})();</script><script>
 (()=>{
   const NS='http://www.w3.org/2000/svg', $=id=>document.getElementById(id), W=1764, X0=8, BASE=610, TOP=250, BOT=820;
   const add=(tag,a,p)=>{const e=document.createElementNS(NS,tag);for(const[k,v]of Object.entries(a))e.setAttribute(k,v);p.appendChild(e);return e};

@@ -1,5 +1,6 @@
 <!doctype html>
-<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Jesulito Pro · en vivo</title>
+<html lang="es-CL"><head>
+<meta name="robots" content="noindex"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Jesulito Pro · en vivo</title>
 <style>*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;background:#0a0b0b;overflow:hidden}canvas{display:block;width:100%;height:100%}</style></head>
 <body><canvas id="c"></canvas>
 <script>
@@ -10,11 +11,11 @@
    Zonas S/R sobre el precio con pivotes de la propia serie. */
 (()=>{
 const cv=document.getElementById('c'),g=cv.getContext('2d');
-const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+const reduce=false;/* demo: siempre animada */
 const lite=matchMedia('(pointer:coarse)').matches||(navigator.hardwareConcurrency||8)<=4;
 const FAST=/fast/.test(location.search);
 const C={bg:'#0a0b0b',bull:'#00E5B0',bear:'#FF3B5C',dBull:'#4CAF50',dBear:'#EF5350',mom:'#FFEB3B',orange:'#e98a4e',white:'#ecefee',gray:'#9ea2a2'};
-const T2=Math.PI*2, BAR=FAST?.012:.8/3, WARM=240, OB=60, OS=-60, CAPT=78, CAPB=-78;
+const T2=Math.PI*2, BAR=FAST?.012:.8/4.5, WARM=240, OB=60, OS=-60, CAPT=78, CAPB=-78;
 let W=0,H=0,DPR=1,u=1;
 function resize(){DPR=Math.min(devicePixelRatio||1,lite?1.25:2);W=innerWidth||640;H=innerHeight||360;cv.width=Math.round(W*DPR);cv.height=Math.round(H*DPR);g.setTransform(DPR,0,0,DPR,0,0);u=Math.max(W<520?1:.55,Math.min(W/960,H/540))}
 addEventListener('resize',resize);resize();

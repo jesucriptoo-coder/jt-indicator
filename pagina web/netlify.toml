@@ -1,0 +1,13 @@
+[build]
+  publish = "."
+
+# Imágenes, fuentes y librerías con nombre fijo/hash: caché larga (carga más rápida en visitas repetidas)
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/embeds/*"
+  [headers.values]
+    X-Robots-Tag = "noindex"
