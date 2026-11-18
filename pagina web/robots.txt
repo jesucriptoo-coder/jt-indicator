@@ -1,2 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /embeds/
+
+Sitemap: https://www.jesualgo.cl/sitemap.xml
